@@ -7,6 +7,10 @@ Using computer-vision to analysze, describe, and generate the short names.
 2. Moondream2: a highly efficient vision model that's great and identifying and describing features in complex images.
 Runs on edge, needing only 2 GB of RAM to run on non-GPU nodes.
 
+# Local Dev
+To run the projcet, using the `uv` package manager: `uv run fastapi dev`
+
+
 //TODO: Add more to README
 
 # License
