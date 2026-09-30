@@ -10,7 +10,19 @@ Fanous aims to rename photos with more human-centric and searchable names.
 
 # Stack
 ## Frontend Client
-## Backend
+A Laravel Web app, to ingest, process, and output renamed photos.
+Responsible for:
+- A web interface for the user
+- Accepting files
+- EXIF and metadata extraction
+- Relaying data and images to backend
+- Processing output to rename the files using returned outputs from server
+- Packaging (zipping) and downloading the files for the user
+
+## Backend Inference Server
+Responsible for all the image analysis using Moondream2.
+// Dev has yet to start
+### Moondream2
 
 # How?
 
