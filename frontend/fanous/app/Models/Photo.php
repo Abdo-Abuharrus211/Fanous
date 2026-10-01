@@ -2,38 +2,254 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
-class Photo extends Model
+/**
+ * Represents a photo during the upload → process → download flow.
+ * Not an Eloquent model, state lives in temp storage.
+ *
+ * @property-read string $id
+ * @property-read string $originalName
+ * @property-read string $mimeType
+ * @property-read int $size
+ * @property-read string $tempPath
+ * @property-read array<string, mixed> $exifData
+ * @property-read string|null $newName
+ * @property-read string|null $newDescription
+ * @property-read string $status
+ */
+class Photo
 {
-    //
-    /**
-     * A photo is made of a name, metadata/exif data, image file (JPEG, PNG, etc), date taken, date modified, new description,
-     * 
-     * 
-     * TODO:
-     * create class attributes
-     * create base methods to show, set, etc
-     * create methods to modify the attributes
-     */
-
-    public $name = ""; // default value is empty
-    private $exifData = []; // empty array or object?
-    private $imageFile = null;
-    private $newDescr = "";
+    public function __construct(
+        public readonly string $id,
+        public readonly string $originalName,
+        public readonly string $mimeType,
+        public readonly int $size,
+        public readonly string $tempPath,
+        public readonly array $exifData = [],
+        public readonly ?string $newName = null,
+        public readonly ?string $newDescription = null,
+        public readonly string $status = 'pending',
+    ) {}
 
     /**
-     * Construct a photo object
+     * Create a Photo from an uploaded file.
+     * Saves to temp storage and extracts EXIF data.
      */
-    public function Photo($name, $exif, $file){
-        $this->name = $name;
-        $this->exifData = $exif;
-        $this->imageFile = $file;
+    public static function fromUpload(UploadedFile $file, string $sessionId): self
+    {
+        $id = Str::ulid()->toString();
+        $extension = $file->getClientOriginalExtension() ?: $file->guessExtension();
+        $tempPath = "temp/{$sessionId}/{$id}.{$extension}";
+
+        // store the file
+        Storage::putFileAs(
+            "temp/{$sessionId}",
+            $file,
+            "{$id}.{$extension}",
+        );
+
+        $exifData = self::extractExif(Storage::path($tempPath));
+
+        return new self(
+            id: $id,
+            originalName: $file->getClientOriginalName(),
+            mimeType: $file->getMimeType(),
+            size: $file->getSize(),
+            tempPath: $tempPath,
+            exifData: $exifData,
+        );
     }
 
+    /**
+     * Return a new Photo instance with analysis results applied.
+     */
+    public function withAnalysis(string $newName, ?string $description = null): self
+    {
+        return new self(
+            id: $this->id,
+            originalName: $this->originalName,
+            mimeType: $this->mimeType,
+            size: $this->size,
+            tempPath: $this->tempPath,
+            exifData: $this->exifData,
+            newName: $newName,
+            newDescription: $description,
+            status: 'ready',
+        );
+    }
 
-    
+    /**
+     * Convert to array for JSON serialization to the frontend.
+     *
+     * @return array{
+     *     id: string,
+     *     originalName: string,
+     *     mimeType: string,
+     *     size: int,
+     *     exifData: array<string, mixed>,
+     *     newName: string|null,
+     *     newDescription: string|null,
+     *     status: string,
+     *     previewUrl: string,
+     * }
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'originalName' => $this->originalName,
+            'mimeType' => $this->mimeType,
+            'size' => $this->size,
+            'exifData' => $this->exifData,
+            'newName' => $this->newName,
+            'newDescription' => $this->newDescription,
+            'status' => $this->status,
+            'previewUrl' => route('photos.preview', ['id' => $this->id]),
+        ];
+    }
 
+    /**
+     * Read the file contents from temp storage.
+     */
+    public function contents(): string|false
+    {
+        return Storage::get($this->tempPath);
+    }
 
+    /**
+     * Get the file extension, excluding the dot.
+     */
+    public function extension(): string
+    {
+        return pathinfo($this->tempPath, PATHINFO_EXTENSION);
+    }
 
+    //// Static helpers ////
+
+    /**
+     * Ensure the temp directory exists for a session.
+     */
+    public static function ensureSessionDir(string $sessionId): void
+    {
+        Storage::makeDirectory("temp/{$sessionId}");
+    }
+
+    /**
+     * Delete all temp files for a session.
+     */
+    public static function cleanupSession(string $sessionId): void
+    {
+        if (Storage::exists("temp/{$sessionId}")) {
+            Storage::deleteDirectory("temp/{$sessionId}");
+        }
+    }
+
+    /**
+     * Get all photos stored for a session.
+     *
+     * @return list<Photo>
+     */
+    public static function listForSession(string $sessionId): array
+    {
+        $dir = "temp/{$sessionId}";
+
+        if (! Storage::exists($dir)) {
+            return [];
+        }
+
+        $files = Storage::files($dir);
+        $photos = [];
+
+        foreach ($files as $path) {
+            $id = pathinfo($path, PATHINFO_FILENAME);
+            $exifData = self::extractExif(Storage::path($path));
+
+            $photos[] = new self(
+                id: $id,
+                originalName: basename($path),
+                mimeType: Storage::mimeType($path) ?: 'application/octet-stream',
+                size: Storage::size($path),
+                tempPath: $path,
+                exifData: $exifData,
+            );
+        }
+
+        return $photos;
+    }
+
+    /**
+     * Extract EXIF data from a file path.
+     * Returns empty array if the file doesn't support EXIF or the extension isn't loaded.
+     *
+     * @return array<string, mixed>
+     */
+    private static function extractExif(string $filePath): array
+    {
+        if (! function_exists('exif_read_data')) {
+            return [];
+        }
+
+        $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+
+        if (! in_array($ext, ['jpg', 'jpeg', 'tiff', 'png'])) {
+            return [];
+        }
+
+        $exif = @exif_read_data($filePath, 'EXIF');
+
+        if ($exif === false) {
+            return [];
+        }
+
+        return [
+            'DateTime' => $exif['DateTimeOriginal'] ?? $exif['DateTime'] ?? null,
+            'Make' => $exif['Make'] ?? null,
+            'Model' => $exif['Model'] ?? null,
+            'ExposureTime' => $exif['ExposureTime'] ?? null,
+            'FNumber' => $exif['FNumber'] ?? null,
+            'ISOSpeedRatings' => $exif['ISOSpeedRatings'] ?? null,
+            'FocalLength' => $exif['FocalLength'] ?? null,
+            'GPS' => isset($exif['GPSLatitude'], $exif['GPSLongitude'])
+                ? [
+                    'lat' => self::gpsToDecimal($exif['GPSLatitude'], $exif['GPSLatitudeRef'] ?? 'N'),
+                    'lng' => self::gpsToDecimal($exif['GPSLongitude'], $exif['GPSLongitudeRef'] ?? 'E'),
+                ]
+                : null,
+        ];
+    }
+
+    /**
+     * Convert EXIF GPS coordinates to decimal degrees.
+     */
+    private static function gpsToDecimal(array $coords, string $ref): float
+    {
+        $degrees = count($coords) > 0 ? self::fractionToFloat($coords[0]) : 0;
+        $minutes = count($coords) > 1 ? self::fractionToFloat($coords[1]) : 0;
+        $seconds = count($coords) > 2 ? self::fractionToFloat($coords[2]) : 0;
+
+        $decimal = $degrees + ($minutes / 60) + ($seconds / 3600);
+
+        if (in_array($ref, ['S', 'W'])) {
+            $decimal *= -1;
+        }
+
+        return $decimal;
+    }
+
+    /**
+     * Convert an EXIF fraction string (e.g. "1/125") to a float.
+     */
+    private static function fractionToFloat(string $value): float
+    {
+        if (str_contains($value, '/')) {
+            [$num, $den] = explode('/', $value);
+
+            return $den != 0 ? (float) $num / (float) $den : 0;
+        }
+
+        return (float) $value;
+    }
 }
