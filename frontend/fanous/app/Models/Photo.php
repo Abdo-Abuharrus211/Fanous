@@ -31,12 +31,11 @@ class Photo
         public readonly array $exifData = [],
         public readonly ?string $newName = null,
         public readonly ?string $newDescription = null,
-        public readonly string $status = 'pending',
+        public readonly string $status = 'pending', // pending, ready
     ) {}
 
     /**
-     * Create a Photo from an uploaded file.
-     * Saves to temp storage and extracts EXIF data.
+     * Create a Photo from an uploaded file and saves to temp storage.
      */
     public static function fromUpload(UploadedFile $file, string $sessionId): self
     {
@@ -51,8 +50,10 @@ class Photo
             "{$id}.{$extension}",
         );
 
+        // extract the data
         $exifData = self::extractExif(Storage::path($tempPath));
 
+        // this implicityly invokes the constructor 
         return new self(
             id: $id,
             originalName: $file->getClientOriginalName(),
@@ -132,9 +133,9 @@ class Photo
     /**
      * Ensure the temp directory exists for a session.
      */
-    public static function ensureSessionDir(string $sessionId): void
+    public static function ensureSessionDir(string $sessionId): bool
     {
-        Storage::makeDirectory("temp/{$sessionId}");
+        return Storage::makeDirectory("temp/{$sessionId}");
     }
 
     /**
