@@ -22,4 +22,18 @@ class Photo extends Model
     private $imageFile = null;
     private $newDescr = "";
 
+    /**
+     * Construct a photo object
+     */
+    public function Photo($name, $exif, $file){
+        $this->name = $name;
+        $this->exifData = $exif;
+        $this->imageFile = $file;
+    }
+
+
+    
+
+
+
 }
