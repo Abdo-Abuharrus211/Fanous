@@ -44,7 +44,6 @@
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
-        <h1>BRUHH TESTTING</h1>
-        <x-inertia::home />
+        <x-inertia::app />
     </body>
 </html>
