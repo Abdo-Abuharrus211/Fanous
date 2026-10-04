@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useCallback, useState } from 'react';
 import DropZone, { type UploadedPhoto } from '@/components/drop-zone';
 import PhotoCard from '@/components/photo-card';
@@ -18,6 +18,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const [photos, setPhotos] = useState<PagePhoto[]>(
         (initialPhotos ?? []).map((p) => ({ ...p, selected: false })),);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [isRemoving, setIsRemoving] = useState(false);
 
 
     // Add uploaded photos to `photos` array
@@ -40,8 +41,32 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
     // remove the photo from uploads
     const removePhoto = useCallback((photoID: string) => {
+        setIsRemoving(true);
         setPhotos((prev) =>
             prev.filter((p) => p.id !== photoID));
+
+        // make call to Laravel to remove from storage
+
+        try {
+            router.post('/photos/remove',
+                { photoID }, {
+                onSuccess: (page) => {
+
+                },
+                onError: (error) => {
+                    console.error("Failed to remove photos:", error);
+                },
+                forceFormData: true,
+                preserveScroll: true,
+            },
+
+            )
+        } catch (error) {
+            console.error("Error making removal request", error);
+
+        } finally {
+            setIsRemoving(false);
+        }
     }, []);
 
 
