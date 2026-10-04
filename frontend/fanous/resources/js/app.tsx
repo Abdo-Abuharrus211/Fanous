@@ -6,8 +6,11 @@ import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+// TODO: update the name in env
+const appName = import.meta.env.VITE_APP_NAME || 'Fanous';
+
+// Here you can add new layouts based on the title 
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {
