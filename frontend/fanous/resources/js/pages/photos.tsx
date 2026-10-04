@@ -38,9 +38,16 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         );
     }, []);
 
+    // remove the photo from uploads
+    const removePhoto = useCallback((photoID: string) => {
+        setPhotos((prev) =>
+            prev.filter((p) => p.id !== photoID));
+    }, []);
+
+
     const selectedPhotos = photos.filter((p) => p.selected);
 
-    
+
 
     // TODO: implement the logic for sending to controller
     const handleAnalyze = () => {
@@ -97,6 +104,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                                 {...photo}
                                 selected={photo.selected}
                                 onSelect={handleSelect}
+                                onRemove={removePhoto}
                             />
                         ))}
                     </div>

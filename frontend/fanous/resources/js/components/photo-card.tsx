@@ -11,6 +11,7 @@ export interface PhotoCardProps {
     size: number;
     selected: boolean;
     onSelect: (id: string) => void;
+    onRemove: (id: string) => void;
 }
 
 export default function PhotoCard({
@@ -23,6 +24,7 @@ export default function PhotoCard({
     size,
     selected,
     onSelect,
+    onRemove,
 }: PhotoCardProps) {
     const statusColor: Record<string, string> = {
         pending: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
@@ -58,6 +60,7 @@ export default function PhotoCard({
             <div className="p-3">
                 <div className="mb-1 flex items-center justify-between gap-2">
                     <p className="truncate text-sm font-medium">
+                        {/* TODO: this doesn't show the actual file name */}
                         {originalName}
                     </p>
                     <Badge
@@ -68,6 +71,12 @@ export default function PhotoCard({
                     >
                         {status}
                     </Badge>
+                </div>
+                <div>
+                    <button onClick={(event)=> {
+                        event?.stopPropagation(); // stops press from triggering select
+                        onRemove(id);
+                    }}>X</button>
                 </div>
 
                 {newName && (
