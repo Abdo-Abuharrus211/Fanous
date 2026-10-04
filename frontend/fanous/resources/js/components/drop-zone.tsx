@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { router } from '@inertiajs/react';
 import { Upload } from 'lucide-react';
+import { toast } from 'sonner';
 
 export interface UploadedPhoto {
     id: string;
@@ -91,6 +92,8 @@ export default function DropZone({
                     },
                     onError: (errors) => {
                         console.error('Upload failed:', errors);
+                        const messages = Object.values(errors).join(', ');
+                        toast.error('Upload failed', { description: messages });
                     },
                     forceFormData: true,
                     preserveScroll: true,
@@ -98,6 +101,7 @@ export default function DropZone({
             );
         } catch (error) {
             console.error('Upload error:', error);
+            toast.error('Upload error', { description: 'Something went wrong while uploading.' });
         } finally {
             setIsUploading(false);
         }
