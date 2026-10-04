@@ -1,9 +1,11 @@
 [project]
 name = "backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "Fanous backend - image analysis and renaming using Moondream2"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "fastapi[standard]>=0.141.1",
+    "fastapi[standard]>=0.115.0",
+    "moondream>=0.1.0",
+    "pillow>=10.0.0",
 ]
