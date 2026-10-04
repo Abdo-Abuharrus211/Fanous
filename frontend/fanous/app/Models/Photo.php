@@ -144,10 +144,21 @@ class Photo
     /**
      * Remove a photo from storage - basically delete if user wants removed
      */
-    public static function removePhoto(string $photoId, string $sessionId)
+    public static function removePhoto(string $photoId, string $sessionId): void
     {
-        if (Storage::exists("temp/{$sessionId}/{$photoId}")) {
-            Storage::delete("temp/{$sessionId}/{$photoId}");
+        $dir = "temp/{$sessionId}";
+        $files = Storage::files($dir);
+
+        // reads as for each path in files...wth php?!
+        foreach ($files as $path) {
+            $fileName = pathinfo($path, PATHINFO_FILENAME);
+
+            if ($fileName === $photoId) {
+                Storage::delete($path);
+                Storage::delete("{$dir}/{$photoId}.meta.json");
+
+                break;
+            }
         }
     }
 
