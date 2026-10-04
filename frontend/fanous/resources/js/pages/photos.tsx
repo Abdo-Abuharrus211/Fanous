@@ -49,14 +49,13 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
         try {
             router.post('/photos/remove',
-                { photoID }, {
+                { photoId: photoID }, {
                 onSuccess: (page) => {
 
                 },
                 onError: (error) => {
                     console.error("Failed to remove photos:", error);
                 },
-                forceFormData: true,
                 preserveScroll: true,
             },
 
