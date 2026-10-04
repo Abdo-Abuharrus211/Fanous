@@ -5,7 +5,7 @@ import { Head, Link } from '@inertiajs/react';
 export default function Welcome() {
     return (
         <>
-            <Head title="Fanous" />
+            <Head title="Welcome" />
             <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background text-foreground">
                 <h1 className="text-4xl font-bold">Fanous</h1>
                 <p className="text-muted-foreground">
