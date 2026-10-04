@@ -193,6 +193,9 @@ class Photo
             $id = pathinfo($path, PATHINFO_FILENAME);
             $exifData = self::extractExif(Storage::path($path));
 
+            // skip the metadata files from being pumped into react component, want photos only
+            if(str_ends_with($path, 'meta.json')) continue; 
+
             $photos[] = new self(
                 id: $id,
                 originalName: basename($path),

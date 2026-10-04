@@ -56,9 +56,9 @@ class PhotoController extends Controller
             $files,
         );
 
-        // TODO: fix this, needs to render React page instead of returning bare JSON - causes white pop-up to appear 
-
-        return response()->json(['photos' => $photos]);
+        // Inertia doesn't expect JSON response so redirect
+        // return response()->json(['photos' => $photos]);
+        return redirect()->route('photos.index');
     }
 
     /**
@@ -161,9 +161,12 @@ class PhotoController extends Controller
         $pId = $request->input('photoId', "");
         Photo::removePhoto($pId, $sessionId);
 
-        return Inertia::render('photos', [
-            'sessionId' => $sessionId,
-        ]);
+        // return Inertia::render('photos/', [
+        //     'sessionId' => $sessionId,
+        // ]);
+
+        // redirecting to route by name to avoid Inertia making GET req on the '/photos/remove' endpoint
+        return redirect()->route('photos.index');
     }
 
     /**
