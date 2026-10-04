@@ -6,4 +6,13 @@ tasks I need to get to
 - [ ] Create class for inference?
 - [ ] Write Dockerfile for Compose
 - [ ] Test
-- [ ]
+
+API contract from Laravel:
+```text
+API Contract (from frontend code)
+POST /caption
+  Content-Type: multipart/form-data
+  Body: image (file)
+  
+Response: { "name": "descriptive_name", "description": "full caption" }
+```
