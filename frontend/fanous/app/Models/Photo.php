@@ -43,7 +43,8 @@ class Photo
         $extension = $file->getClientOriginalExtension() ?: $file->guessExtension();
         $tempPath = "temp/{$sessionId}/{$id}.{$extension}";
 
-        // store the file
+        // store the file as 'temp/sessionId/photoId.extension'
+        // so each session has a directory
         Storage::putFileAs(
             "temp/{$sessionId}",
             $file,
