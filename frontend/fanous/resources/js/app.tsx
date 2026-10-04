@@ -4,10 +4,10 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { initializeTheme } from '@/hooks/use-appearance';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
+import SimpleLayout from '@/layouts/simple-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 
 
-// TODO: update the name in env
 const appName = import.meta.env.VITE_APP_NAME || 'Fanous';
 
 // Here you can add new layouts based on the title 
@@ -17,6 +17,9 @@ void createInertiaApp({
         switch (true) {
             case name === 'welcome':
                 return null;
+            case name === 'photos':
+                return SimpleLayout;
+            // boiler plate layouts
             case name.startsWith('auth/'):
                 return AuthLayout;
             case name.startsWith('settings/'):
