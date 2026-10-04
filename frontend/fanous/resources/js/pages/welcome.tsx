@@ -7,9 +7,10 @@ export default function Welcome() {
         <>
             <Head title="Welcome" />
             <div className="flex min-h-screen flex-col items-center justify-center gap-6 bg-background text-foreground">
-                <h1 className="text-4xl font-bold">Fanous</h1>
-                <p className="text-muted-foreground">
-                    No more file-system names defined by your camera, rename your photos with human-friendly names
+                <h1 className="text-5xl font-bold">Fanous</h1>
+                <p>
+                    No more file-system names defined by your camera!<br></br>
+                    Rename your photos with human-friendly names
                 </p>
                 <Link
                     href="/photos"
