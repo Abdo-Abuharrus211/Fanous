@@ -161,8 +161,9 @@ class PhotoController extends Controller
         $pId = $request->input('photoId', "");
         Photo::removePhoto($pId, $sessionId);
 
-        // return back the page
-        return Inertia::render("/photos");
+        return Inertia::render('photos', [
+            'sessionId' => $sessionId,
+        ]);
     }
 
     /**
