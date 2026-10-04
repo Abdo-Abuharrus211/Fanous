@@ -11,6 +11,7 @@ Route::post('photos/upload', [PhotoController::class, 'upload'])->name('photos.u
 Route::post('photos/process', [PhotoController::class, 'process'])->name('photos.process');
 Route::post('photos/download', [PhotoController::class, 'download'])->name('photos.download');
 
+// move back before other routes when ready to apply auth
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 });
