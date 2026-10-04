@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PhotoDownloadRequest;
 use App\Http\Requests\PhotoProcessRequest;
+use App\Http\Requests\PhotoRemoveRequest;
 use App\Http\Requests\PhotoUploadRequest;
 use App\Models\Photo;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +30,7 @@ class PhotoController extends Controller
 
         return Inertia::render('photos', [
             'sessionId' => $sessionId,
-            'photos' => array_map(fn (Photo $p) => $p->toArray(), $photos),
+            'photos' => array_map(fn(Photo $p) => $p->toArray(), $photos),
         ]);
     }
 
@@ -51,9 +52,11 @@ class PhotoController extends Controller
 
         // create Photo objects and store them
         $photos = array_map(
-            fn ($file) => Photo::fromUpload($file, $sessionId)->toArray(),
+            fn($file) => Photo::fromUpload($file, $sessionId)->toArray(),
             $files,
         );
+
+        // TODO: fix this, needs to render React page instead of returning bare JSON - causes white pop-up to appear 
 
         return response()->json(['photos' => $photos]);
     }
@@ -84,7 +87,7 @@ class PhotoController extends Controller
 
         foreach ($photoIds as $photoId) {
             $photos = Photo::listForSession($sessionId);
-            $photo = collect($photos)->first(fn (Photo $p) => $p->id === $photoId);
+            $photo = collect($photos)->first(fn(Photo $p) => $p->id === $photoId);
 
             if (! $photo) {
                 $results[] = [
@@ -150,6 +153,19 @@ class PhotoController extends Controller
     }
 
     /**
+     * Remove a photo from temporary storage - delete
+     */
+    public function remove(PhotoRemoveRequest $request)
+    {
+        $sessionId = $this->sessionId($request);
+        $pId = $request->input('photoId', "");
+        Photo::removePhoto($pId, $sessionId);
+
+        // return back the page
+        return Inertia::render("/photos");
+    }
+
+    /**
      * Rename photos, create a zip, and stream it to the user for download.
      */
     public function download(PhotoDownloadRequest $request): StreamedResponse
@@ -158,7 +174,7 @@ class PhotoController extends Controller
         $photoIds = $request->input('photo_ids', []);
 
         $photos = Photo::listForSession($sessionId);
-        $selected = collect($photos)->filter(fn (Photo $p) => in_array($p->id, $photoIds));
+        $selected = collect($photos)->filter(fn(Photo $p) => in_array($p->id, $photoIds));
 
         if ($selected->isEmpty()) {
             abort(404, 'No photos found for download');
@@ -211,7 +227,7 @@ class PhotoController extends Controller
     {
         $sessionId = $this->sessionId($request);
         $photos = Photo::listForSession($sessionId);
-        $photo = collect($photos)->first(fn (Photo $p) => $p->id === $id);
+        $photo = collect($photos)->first(fn(Photo $p) => $p->id === $id);
 
         if (! $photo) {
             abort(404);
