@@ -27,6 +27,17 @@ Responsible for all the image analysis using Moondream2.
 # How?
 
 
+# Gen-AI Disclaimer
+I want to be clear about how I utilize generative AI, because the tech's impressive but it's also double-edged...
+Since I *actually* enjoy programming, I take steps to ensure understanding and ownership of code I don't write by hand.
+**Uses:**
+- Use generative AI as a rubber-ducky to bounce ideas back and forth
+- Generate boring boilerplate and low-consequence items like Tailwind classes
+- Fill in knowledge gaps with new technologies
+- Research idiomatic conventions and where I'm lacking
+- I never commit a change without parsing line by line and editing where needed
+- If I don't understand it, I dont' ship it
+
 # Instructions
 
 
