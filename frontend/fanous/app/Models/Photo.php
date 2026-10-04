@@ -64,6 +64,8 @@ class Photo
         );
     }
 
+
+    // TODO: consider making fields mutable and just update...? This is probably cleaner for packaging later for download
     /**
      * Return a new Photo instance with analysis results applied.
      */

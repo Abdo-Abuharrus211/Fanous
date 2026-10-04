@@ -20,6 +20,7 @@
         </script>
 
         {{-- Inline style to set the HTML background color based on our theme in app.css --}}
+        {{-- TODO: remove this boiler plate with my styling --}}
         <style>
             html {
                 background-color: oklch(1 0 0);
@@ -43,6 +44,7 @@
         </x-inertia::head>
     </head>
     <body class="font-sans antialiased">
-        <x-inertia::app />
+        <h1>BRUHH TESTTING</h1>
+        <x-inertia::home />
     </body>
 </html>
