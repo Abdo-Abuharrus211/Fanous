@@ -51,6 +51,14 @@ class Photo
             "{$id}.{$extension}",
         );
 
+        // save metadata for later retrieval
+        Storage::put(
+            "temp/{$sessionId}/{$id}.meta.json",
+            json_encode([
+                'originalName' => $file->getClientOriginalName(),
+            ]),
+        );
+
         // extract the data
         $exifData = self::extractExif(Storage::path($tempPath));
 
@@ -196,13 +204,19 @@ class Photo
 
             $id = pathinfo($path, PATHINFO_FILENAME);
             $exifData = self::extractExif(Storage::path($path));
+            $metaPath = "temp/{$sessionId}/{$id}.meta.json";
+            $originalName = basename($path);
 
-            // skip the metadata files from being pumped into react component, want photos only
-            if(str_ends_with($path, 'meta.json')) continue; 
+            if (Storage::exists($metaPath)) {
+                $meta = json_decode(Storage::get($metaPath), true);
+                if (! empty($meta['originalName'])) {
+                    $originalName = $meta['originalName'];
+                }
+            }
 
             $photos[] = new self(
                 id: $id,
-                originalName: basename($path),
+                originalName: $originalName,
                 mimeType: Storage::mimeType($path) ?: 'application/octet-stream',
                 size: Storage::size($path),
                 tempPath: $path,
