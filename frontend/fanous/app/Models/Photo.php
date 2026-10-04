@@ -190,6 +190,10 @@ class Photo
         $photos = [];
 
         foreach ($files as $path) {
+            if (str_ends_with($path, '.meta.json')) {
+                continue;
+            }
+
             $id = pathinfo($path, PATHINFO_FILENAME);
             $exifData = self::extractExif(Storage::path($path));
 
