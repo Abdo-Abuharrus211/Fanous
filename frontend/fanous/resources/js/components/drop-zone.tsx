@@ -105,7 +105,7 @@ export default function DropZone({
 
     return (
         <div className="flex flex-col items-center gap-4">
-            <div
+             <div
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}

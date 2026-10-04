@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
 export interface PhotoCardProps {
     id: string;
@@ -55,12 +56,20 @@ export default function PhotoCard({
                     alt={originalName}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
+                <button
+                    onClick={(event) => {
+                        event.stopPropagation();
+                        onRemove(id);
+                    }}
+                    className="absolute right-2 top-2 z-10 flex size-7 items-center justify-center rounded-full bg-background/80 text-muted-foreground opacity-0 backdrop-blur-sm transition-all hover:bg-destructive hover:text-destructive-foreground group-hover:opacity-100"
+                >
+                    <X className="size-4" />
+                </button>
             </div>
 
             <div className="p-3">
                 <div className="mb-1 flex items-center justify-between gap-2">
                     <p className="truncate text-sm font-medium">
-                        {/* TODO: this doesn't show the actual file name */}
                         {originalName}
                     </p>
                     <Badge
@@ -71,12 +80,6 @@ export default function PhotoCard({
                     >
                         {status}
                     </Badge>
-                </div>
-                <div>
-                    <button onClick={(event)=> {
-                        event?.stopPropagation(); // stops press from triggering select
-                        onRemove(id);
-                    }}>X</button>
                 </div>
 
                 {newName && (
