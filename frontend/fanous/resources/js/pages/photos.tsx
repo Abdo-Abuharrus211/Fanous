@@ -90,8 +90,8 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         <>
             <Head title="Photos" />
 
-            <div className="flex flex-col gap-8">
-                <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-16">
+                <div className="flex items-center gap-16 justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold">Upload & Analyze Your Photos</h1>
                         <p>This will generate human-friends, and memorable, filenames based on what they depict.</p>
