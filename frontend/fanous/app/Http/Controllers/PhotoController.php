@@ -125,12 +125,17 @@ class PhotoController extends Controller
                     $results[] = $updated->toArray();
 
                     // Save updated metadata to session storage for later
+                    $metaPath = "temp/{$sessionId}/{$photoId}.meta.json";
+                    $existingMeta = Storage::exists($metaPath)
+                        ? json_decode(Storage::get($metaPath), true)
+                        : [];
+
                     Storage::put(
-                        "temp/{$sessionId}/{$photoId}.meta.json",
-                        json_encode([
+                        $metaPath,
+                        json_encode(array_merge($existingMeta, [
                             'newName' => $newName,
                             'newDescription' => $description,
-                        ]),
+                        ])),
                     );
                 } else {
                     $results[] = [
