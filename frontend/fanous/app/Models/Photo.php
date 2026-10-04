@@ -130,6 +130,7 @@ class Photo
         return pathinfo($this->tempPath, PATHINFO_EXTENSION);
     }
 
+  
     //// Static helpers ////
 
     /**
@@ -138,6 +139,16 @@ class Photo
     public static function ensureSessionDir(string $sessionId): bool
     {
         return Storage::makeDirectory("temp/{$sessionId}");
+    }
+
+    /**
+     * Remove a photo from storage - basically delete if user wants removed
+     */
+    public static function removePhoto(string $photoId, string $sessionId)
+    {
+        if (Storage::exists("temp/{$sessionId}/{$photoId}")) {
+            Storage::delete("temp/{$sessionId}/{$photoId}");
+        }
     }
 
     /**
