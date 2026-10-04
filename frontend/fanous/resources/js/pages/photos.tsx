@@ -1,5 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
 import DropZone, { type UploadedPhoto } from '@/components/drop-zone';
 import PhotoCard from '@/components/photo-card';
 import { Button } from '@/components/ui/button';
@@ -55,6 +56,10 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                 },
                 onError: (error) => {
                     console.error("Failed to remove photos:", error);
+                    const messages = typeof error === 'object'
+                        ? Object.values(error).join(', ')
+                        : 'Could not remove photo.';
+                    toast.error('Remove failed', { description: messages });
                 },
                 preserveScroll: true,
             },
@@ -62,6 +67,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
             )
         } catch (error) {
             console.error("Error making removal request", error);
+            toast.error('Remove error', { description: 'Something went wrong while removing the photo.' });
 
         } finally {
             setIsRemoving(false);
