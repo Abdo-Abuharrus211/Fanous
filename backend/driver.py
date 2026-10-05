@@ -2,6 +2,7 @@
 The Driver class manages a session's request state, instances of the VL model,
 and facilitates processing business logic.
 """
+# TODO: In future, Will refactor in future to be modular via dependency injection or composition so less repetitive code
 
 from hf_model import init_model as init_hf_model, caption as hf_caption, generate_name as hf_generate_name
 from model import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
