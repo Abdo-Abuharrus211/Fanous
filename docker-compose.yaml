@@ -1,4 +1,15 @@
 services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8001:8000"
+    environment:
+      - FANOUS_SERVER_URL=http://backend:8000
+      - APP_KEY=base64:2C7K9wf80G3QnJQ+EmNMuHZ3reE5hAmPr7TMoioOcw4=
+    depends_on:
+      - backend
+    restart: unless-stopped
+
   backend:
     build: ./backend
     ports:
