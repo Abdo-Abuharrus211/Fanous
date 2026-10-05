@@ -12,6 +12,7 @@ from transformers import AutoModelForCausalLM
 
 TOKEN = os.environ.get("HF_TOKEN")
 
+
 def init_model():
     model = AutoModelForCausalLM.from_pretrained(
         "vikhyatk/moondream2",
@@ -36,7 +37,7 @@ def generate_name(model, image_bytes: bytes) -> str:
     prompt = (
         "Generate a short, descriptive, human-friendly filename for this photo. "
         "Use only lowercase letters, numbers, and hyphens. No spaces or special characters. "
-        "Keep it under 50 characters. Return only the filename, nothing else."
+        "Keep it under 80 characters and descriptive of the main subject of the photo. Return only the filename, nothing else."
     )
     result = model.query(image, prompt)
     name = result["answer"].strip().strip('"').strip()
