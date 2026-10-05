@@ -1,10 +1,11 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 
 from driver import Driver
+from model_modes import ModelMode
 
 app = FastAPI()
 
-DRIVER = Driver()
+DRIVER = Driver(mode=ModelMode.huggingface)
 
 
 @app.get("/")
@@ -24,7 +25,7 @@ async def caption(image: UploadFile = File(...)):
     Response: { "name": "descriptive_name", "description": "full caption" }
     """
     contents = await image.read()
-    processed = await DRIVER.process_with_tokenizer(contents)
+    processed = await DRIVER.process_with_hf(contents)
 
     if not processed:
         raise HTTPException(status_code=500, detail="Captioning process failed")
