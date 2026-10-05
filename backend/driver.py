@@ -14,7 +14,6 @@ class Driver:
         self.session_id = session_id
         self._model = None
         self.model_mode = mode
-        self._vl_model = None
         self.state = {}
 
     @property
@@ -26,28 +25,15 @@ class Driver:
                 self._model = init_vl_model()
         return self._model
 
-
-    # remove if no longer needed
-    @property
-    def model_pair(self):
-        if self._model is None:
-            self._model = init_hf_model()
-        return self._model
-    # remove if no longer needed
-    def vl_model(self):
-        if self._vl_model is None:
-            self._vl_model = init_vl_model()
-        return self._vl_model
-
     async def process_with_hf(self, image_bytes: bytes) -> dict:
-        model = self.get_model()
+        model = self.get_model
         description = hf_caption(model, image_bytes)
         name = hf_generate_name(model, image_bytes)
 
         return {"name": name, "description": description}
 
     async def process(self, image_bytes: bytes) -> dict:
-        model = self.get_model()
+        model = self.get_model
         description = vl_caption(model, image_bytes)
         name = vl_generate_name(model, image_bytes)
 
