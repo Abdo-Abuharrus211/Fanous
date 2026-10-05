@@ -1,4 +1,5 @@
 import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 
@@ -56,6 +57,16 @@ export default function PhotoCard({
                     alt={originalName}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
+                {status === 'processing' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div className="flex flex-col items-center gap-2 text-white">
+                            <Spinner className="size-8" />
+                            <span className="text-xs font-medium">
+                                Processing...
+                            </span>
+                        </div>
+                    </div>
+                )}
                 <button
                     onClick={(event) => {
                         event.stopPropagation();
