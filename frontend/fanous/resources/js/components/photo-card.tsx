@@ -1,7 +1,8 @@
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 
 export interface PhotoCardProps {
     id: string;
@@ -79,13 +80,13 @@ export default function PhotoCard({
             </div>
 
             <div className="p-3">
-                <div className="mb-1 flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-2">
                     <p className="truncate text-sm font-medium">
                         {originalName}
                     </p>
                     <Badge
                         className={cn(
-                            'rounded-full px-2 py-0 text-xs',
+                            'shrink-0 rounded-full px-2 py-0 text-xs',
                             statusColor[status] ?? '',
                         )}
                     >
@@ -94,20 +95,34 @@ export default function PhotoCard({
                 </div>
 
                 {newName && (
-                    <p className="text-s text-muted-foreground">
+                    <p className="text-xs text-muted-foreground">
                         → {newName}
                     </p>
                 )}
 
-                {newDescription && (
-                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                        {newDescription}
+                <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                        {formatSize(size)}
                     </p>
-                )}
 
-                <p className="mt-1 text-xs text-muted-foreground">
-                    {formatSize(size)}
-                </p>
+                    {newDescription && (
+                        <Collapsible>
+                            <CollapsibleTrigger
+                                className={cn(
+                                    'flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground',
+                                    'data-[state=open]:rotate-180',
+                                )}
+                            >
+                                <ChevronDown className="size-4" />
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="overflow-hidden">
+                                <p className="pt-2 text-xs leading-relaxed text-muted-foreground">
+                                    {newDescription}
+                                </p>
+                            </CollapsibleContent>
+                        </Collapsible>
+                    )}
+                </div>
             </div>
         </div>
     );
