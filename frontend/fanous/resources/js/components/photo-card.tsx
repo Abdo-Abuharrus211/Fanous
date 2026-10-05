@@ -83,7 +83,7 @@ export default function PhotoCard({
                 </div>
 
                 {newName && (
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-s text-muted-foreground">
                         → {newName}
                     </p>
                 )}
