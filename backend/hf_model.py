@@ -4,17 +4,20 @@ Runs locally on CPU — no GPU required.
 """
 
 import io
+import os
 
 import torch
 from PIL import Image
 from transformers import AutoModelForCausalLM
 
+TOKEN = os.environ.get("HF_TOKEN")
 
 def init_model():
     model = AutoModelForCausalLM.from_pretrained(
         "vikhyatk/moondream2",
         trust_remote_code=True,
         dtype=torch.float16,
+        token=TOKEN,
     )
     return model
 
