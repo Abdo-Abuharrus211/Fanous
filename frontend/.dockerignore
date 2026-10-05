@@ -1,0 +1,12 @@
+node_modules/
+vendor/
+public/build/
+storage/app/private/temp/*
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+.idea/
+.vscode/
+.git/
+*.md
+.env
