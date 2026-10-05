@@ -13,18 +13,27 @@ Fanous aims to rename photos with more human-centric and searchable names.
 A Laravel Web app, to ingest, process, and output renamed photos.
 Responsible for:
 - A web interface for the user
-- Accepting files
+- Accepting files:
 - EXIF and metadata extraction
 - Relaying data and images to backend
 - Processing output to rename the files using returned outputs from server
 - Packaging (zipping) and downloading the files for the user
 
 ## Backend Inference Server
-Responsible for all the image analysis using Moondream2.
-// Dev has yet to start
-### Moondream2
+A **FastAPI** server that's responsible responsible image analysis, describing, and name genaration.
 
-# How?
+## Moondream2
+This fast and efficient model, with open-weights, runs on edge compute, requiring only 2-4GB of RAM.
+It offers captioning, querying, segmenting capabilities.
+### How?
+While Moondream does offer a way to run their models locally through their inference engine, Photon, it only runs on Nvidia GPUs and Apple silicone...
+
+However, the model is designed to run on edge, including CPU only.
+So mine runs on a VPS without a CPU, thanks to **Hugging Face** `transformers` library.
+What it does:
+- Downloads the model and weights from Hugging Face
+- Loads model into memory during runtime
+- Runs inference locally
 
 
 # Gen-AI Disclaimer
@@ -40,6 +49,12 @@ Since I *actually* enjoy programming, I take steps to ensure understanding and o
 
 # Instructions
 
+
+# Future Features and Ideas
+- Location and landmark identification
+- Scheduled batch jobs
+- Dedicated GPUs
+- Integrating animal and plant species identification for descriptions
 
 # Credits
 
