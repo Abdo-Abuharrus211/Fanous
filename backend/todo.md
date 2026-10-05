@@ -7,3 +7,4 @@ tasks I need to get to
 - [X] Write Dockerfile for Compose
 - [X] Test
 - [X] Refactor model modules and Driver class to be more modular and use models types
+- [ ] Abstract the model classes, then refactor hf_model extend model
