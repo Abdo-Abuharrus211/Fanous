@@ -1,0 +1,14 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - HF_HUB_DISABLE_TELEMETRY=1
+    deploy:
+      resources:
+        limits:
+          memory: 5G
+        reservations:
+          memory: 4G
+    restart: unless-stopped

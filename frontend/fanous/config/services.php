@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'fanous_backend' => [
+        'url' => env('FANOUS_SERVER_URL'),
+        'secret' => env('FANOUS_SERVER_SECRET'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
