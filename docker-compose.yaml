@@ -16,6 +16,7 @@ services:
       - "8000:8000"
     environment:
       - HF_HUB_DISABLE_TELEMETRY=1
+      - HF_TOKEN=${HF_TOKEN:-}
     deploy:
       resources:
         limits:
