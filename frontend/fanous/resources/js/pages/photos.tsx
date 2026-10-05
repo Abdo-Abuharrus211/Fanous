@@ -84,6 +84,14 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         if (selectedPhotos.length === 0) return;
         setIsProcessing(true);
 
+        setPhotos((prev) =>
+            prev.map((photo) =>
+                selectedPhotos.some((s) => s.id === photo.id)
+                    ? { ...photo, status: 'processing' }
+                    : photo,
+            ),
+        );
+
         try {
             const response = await fetch('/photos/process', {
                 method: 'POST',
@@ -136,6 +144,13 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                         ? error.message
                         : 'Something went wrong while processing photos.',
             });
+            setPhotos((prev) =>
+                prev.map((photo) =>
+                    selectedPhotos.some((s) => s.id === photo.id)
+                        ? { ...photo, status: 'pending' }
+                        : photo,
+                ),
+            );
         } finally {
             setIsProcessing(false);
         }
