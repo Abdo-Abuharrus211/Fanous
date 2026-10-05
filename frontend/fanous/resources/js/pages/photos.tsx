@@ -20,6 +20,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         (initialPhotos ?? []).map((p) => ({ ...p, selected: false })),);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
+    const [isDownloading, setIsDownloading] = useState(false);
 
 
     // Add uploaded photos to `photos` array
@@ -79,17 +80,113 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
 
 
-    // TODO: implement the logic for sending to controller
-    const handleAnalyze = () => {
+    const handleProcess = async () => {
         if (selectedPhotos.length === 0) return;
         setIsProcessing(true);
-        console.log('Analyzing:', selectedPhotos.map((p) => p.id));
+
+        try {
+            const response = await fetch('/photos/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content ?? '',
+                },
+                body: JSON.stringify({
+                    photo_ids: selectedPhotos.map((p) => p.id),
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error ?? 'Processing failed');
+            }
+
+            const data = await response.json();
+
+            setPhotos((prev) =>
+                prev.map((photo) => {
+                    const result = data.results?.find(
+                        (r: { id: string }) => r.id === photo.id,
+                    );
+
+                    if (result && result.status !== 'error') {
+                        return {
+                            ...photo,
+                            newName: result.newName ?? photo.newName,
+                            newDescription:
+                                result.newDescription ?? photo.newDescription,
+                            status: result.status ?? photo.status,
+                        };
+                    }
+
+                    if (result?.status === 'error') {
+                        return { ...photo, status: 'error' };
+                    }
+
+                    return photo;
+                }),
+            );
+        } catch (error) {
+            console.error('Error processing selected photos', error);
+            toast.error('Process error', {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : 'Something went wrong while processing photos.',
+            });
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
-    // TODO: download the received images from controller
-    const handleDownload = () => {
+    const handleDownload = async () => {
         if (selectedPhotos.length === 0) return;
-        console.log('Downloading:', selectedPhotos.map((p) => p.id));
+        setIsDownloading(true);
+
+        try {
+            const response = await fetch('/photos/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content ?? '',
+                },
+                body: JSON.stringify({
+                    photo_ids: selectedPhotos.map((p) => p.id),
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => null);
+                throw new Error(
+                    data?.error ?? 'Download failed',
+                );
+            }
+
+            // unpacking the images and downloading - important!
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'fanous-photos.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Error downloading processed photos', error);
+            toast.error('Download error', {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : 'Something went wrong while downloading.',
+            });
+        } finally {
+            setIsDownloading(false);
+        }
     };
 
     return (
@@ -104,7 +201,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                     </div>
                     <div className="flex gap-2">
                         <Button
-                            onClick={handleAnalyze}
+                            onClick={handleProcess}
                             disabled={
                                 selectedPhotos.length === 0 || isProcessing
                             }
