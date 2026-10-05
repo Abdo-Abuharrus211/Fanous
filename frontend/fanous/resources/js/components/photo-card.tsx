@@ -96,7 +96,7 @@ export default function PhotoCard({
 
                 {newName && (
                     <p className="mb-2 text-sm text-foreground">
-                        New: {newName}
+                        <span className='font-bold'>New: </span>{newName}
                     </p>
                 )}
 
