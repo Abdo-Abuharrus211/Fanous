@@ -1,11 +1,12 @@
 # To Do:
 tasks I need to get to
-- [ ] Build endpoints for uploading files from client app - reverse engineer
-- [ ] Write the inference via Moondream docs
-- [ ] Create driver class for handling state from HTTP request
-- [ ] Create class for inference?
-- [ ] Write Dockerfile for Compose
+- [X] Build endpoints for uploading files from client app - reverse engineer
+- [X] Write the inference via Moondream docs
+- [X] Create driver class for handling state from HTTP request
+- [X] Create class for inference?
+- [X] Write Dockerfile for Compose
 - [ ] Test
+- [ ] Refactor model modules and Driver class to be more modular and use models types
 
 API contract from Laravel:
 ```text
