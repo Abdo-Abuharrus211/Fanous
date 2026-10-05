@@ -4,9 +4,8 @@ from driver import Driver
 
 app = FastAPI()
 
-# TODO: get the session ID from the frontend???
-# Example session_id, replace with actual logic to generate or retrieve it
-DRIVER = Driver(session_id="12345")
+DRIVER = Driver()
+
 
 @app.get("/")
 def hello():
@@ -25,11 +24,9 @@ async def caption(image: UploadFile = File(...)):
     Response: { "name": "descriptive_name", "description": "full caption" }
     """
     contents = await image.read()
-    filename = image.filename
-    # pass the contents to the driver so model can infer
     processed = await DRIVER.process(contents)
 
-    if not processed or processed is None:
+    if not processed:
         raise HTTPException(status_code=500, detail="Captioning process failed")
 
     return {"name": processed["name"], "description": processed["description"]}
