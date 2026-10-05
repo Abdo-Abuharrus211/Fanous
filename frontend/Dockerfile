@@ -38,6 +38,7 @@ RUN npm run build
 # Final image
 FROM base AS production
 
+COPY fanous/php.ini /usr/local/etc/php/conf.d/fanous.ini
 COPY --from=node-builder /app/public/build ./public/build
 
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
