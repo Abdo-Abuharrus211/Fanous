@@ -80,7 +80,7 @@ export default function PhotoCard({
             </div>
 
             <div className="p-3">
-                <div className="flex items-center justify-between gap-2">
+                <div className="mb-2 flex items-center justify-between gap-2">
                     <p className="truncate text-sm font-medium">
                         {originalName}
                     </p>
@@ -95,34 +95,30 @@ export default function PhotoCard({
                 </div>
 
                 {newName && (
-                    <p className="text-xs text-muted-foreground">
-                        → {newName}
+                    <p className="mb-2 text-sm text-foreground">
+                        New: {newName}
                     </p>
                 )}
 
-                <div className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">
-                        {formatSize(size)}
-                    </p>
+                <p className="text-sm text-muted-foreground">
+                    {formatSize(size)}
+                </p>
 
-                    {newDescription && (
-                        <Collapsible>
-                            <CollapsibleTrigger
-                                className={cn(
-                                    'flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:text-foreground',
-                                    'data-[state=open]:rotate-180',
-                                )}
-                            >
-                                <ChevronDown className="size-4" />
-                            </CollapsibleTrigger>
-                            <CollapsibleContent className="overflow-hidden">
-                                <p className="pt-2 text-xs leading-relaxed text-muted-foreground">
-                                    {newDescription}
-                                </p>
-                            </CollapsibleContent>
-                        </Collapsible>
-                    )}
-                </div>
+                {newDescription && (
+                    <Collapsible className="mt-2">
+                        <CollapsibleTrigger className="mb-2 flex items-center gap-1 text-sm font-medium text-foreground transition-colors hover:text-primary">
+                            <span>Desc.</span>
+                            <ChevronDown
+                                className="size-4 transition-transform [&[data-state=open]]:rotate-180"
+                            />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="overflow-hidden">
+                            <p className="text-sm leading-relaxed text-foreground/80">
+                                {newDescription}
+                            </p>
+                        </CollapsibleContent>
+                    </Collapsible>
+                )}
             </div>
         </div>
     );
