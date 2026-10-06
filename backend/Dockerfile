@@ -14,4 +14,4 @@ ENV HF_HUB_DISABLE_TELEMETRY=1
 
 EXPOSE 8000
 # Run single worker CPU bound anyway...
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+CMD ["uv", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
