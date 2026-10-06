@@ -19,6 +19,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const [photos, setPhotos] = useState<PagePhoto[]>(
         (initialPhotos ?? []).map((p) => ({ ...p, selected: false })),);
     const [isProcessing, setIsProcessing] = useState(false);
+    const [allSelect, setAllSelect] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
 
@@ -78,6 +79,11 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
     const selectedPhotos = photos.filter((p) => p.selected);
 
+
+    const selectAll = () =>{
+        setAllSelect(!allSelect);
+        photos.map((p) => handleSelect(p.id));
+    }
 
 
     const handleProcess = async () => {
@@ -215,6 +221,9 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                         <p>This will generate human-friendly, searchable filenames based on what they depict.</p>
                     </div>
                     <div className="flex gap-2">
+                        <Button className="" onClick={selectAll} disabled={photos.length === 0}>
+                            {!allSelect ? "Sel. All" : "Desel. All"}
+                        </Button>
                         <Button
                             onClick={handleProcess}
                             disabled={
