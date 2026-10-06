@@ -221,8 +221,12 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                         <p>This will generate human-friendly, searchable filenames based on what they depict.</p>
                     </div>
                     <div className="flex gap-2">
-                        <Button className="" onClick={selectAll} disabled={photos.length === 0}>
-                            {!allSelect ? "Sel. All" : "Desel. All"}
+                        <Button
+                            variant="outline"
+                            onClick={handleSelectAll}
+                            disabled={photos.length === 0}
+                        >
+                            {allSelected ? 'Deselect All' : 'Select All'}
                         </Button>
                         <Button
                             onClick={handleProcess}
