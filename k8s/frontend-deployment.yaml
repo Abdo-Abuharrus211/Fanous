@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: fanous
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: fanous-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_ENV
+              value: production
+            - name: APP_DEBUG
+              value: "false"
+            - name: SESSION_DRIVER
+              value: file
+            - name: CACHE_STORE
+              value: file
+            - name: QUEUE_CONNECTION
+              value: sync
+            - name: FANOUS_SERVER_URL
+              value: "http://backend.fanous.svc.cluster.local:8000"
+            - name: APP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: fanous-secrets
+                  key: APP_KEY
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
