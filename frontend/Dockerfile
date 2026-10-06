@@ -26,13 +26,17 @@ COPY fanous/composer.json fanous/composer.lock ./
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
 COPY fanous/ .
+# Generate Wayfinder types (required by Vite build step)
+RUN php artisan wayfinder:generate
+
 
 # Install Node & build assets
 FROM node:22-alpine AS node-builder
 WORKDIR /app
+COPY --from=base /app/resources ./resources
+COPY --from=base /app/routes ./routes
 COPY fanous/package.json fanous/package-lock.json fanous/tsconfig.json fanous/vite.config.ts ./
 RUN npm ci
-COPY fanous/resources ./resources
 RUN npm run build
 
 # Final image
