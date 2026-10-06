@@ -19,7 +19,6 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const [photos, setPhotos] = useState<PagePhoto[]>(
         (initialPhotos ?? []).map((p) => ({ ...p, selected: false })),);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [allSelect, setAllSelect] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
 
@@ -78,12 +77,14 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
 
     const selectedPhotos = photos.filter((p) => p.selected);
+    const allSelected = photos.length > 0 && photos.every((p) => p.selected);
 
-
-    const selectAll = () =>{
-        setAllSelect(!allSelect);
-        photos.map((p) => handleSelect(p.id));
-    }
+    const handleSelectAll = () => {
+        const newState = !allSelected;
+        setPhotos((prev) =>
+            prev.map((p) => ({ ...p, selected: newState })),
+        );
+    };
 
 
     const handleProcess = async () => {
