@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     libfreetype-dev \
     libonig-dev \
     libxml2-dev \
+    libsqlite3-dev \
     zip \
     unzip \
     curl \
