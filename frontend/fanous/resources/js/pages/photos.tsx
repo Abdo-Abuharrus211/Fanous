@@ -77,12 +77,27 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
 
     const selectedPhotos = photos.filter((p) => p.selected);
+    const allSelected = photos.length > 0 && photos.every((p) => p.selected);
 
+    const handleSelectAll = () => {
+        const newState = !allSelected;
+        setPhotos((prev) =>
+            prev.map((p) => ({ ...p, selected: newState })),
+        );
+    };
 
 
     const handleProcess = async () => {
         if (selectedPhotos.length === 0) return;
         setIsProcessing(true);
+
+        setPhotos((prev) =>
+            prev.map((photo) =>
+                selectedPhotos.some((s) => s.id === photo.id)
+                    ? { ...photo, status: 'processing' }
+                    : photo,
+            ),
+        );
 
         try {
             const response = await fetch('/photos/process', {
@@ -136,6 +151,13 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                         ? error.message
                         : 'Something went wrong while processing photos.',
             });
+            setPhotos((prev) =>
+                prev.map((photo) =>
+                    selectedPhotos.some((s) => s.id === photo.id)
+                        ? { ...photo, status: 'pending' }
+                        : photo,
+                ),
+            );
         } finally {
             setIsProcessing(false);
         }
@@ -197,9 +219,16 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                 <div className="flex items-center gap-16 justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold">Upload & Analyze Your Photos</h1>
-                        <p>This will generate human-friends, and memorable, filenames based on what they depict.</p>
+                        <p>This will generate human-friendly, searchable filenames based on what they depict.</p>
                     </div>
                     <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={handleSelectAll}
+                            disabled={photos.length === 0}
+                        >
+                            {allSelected ? 'Deselect All' : 'Select All'}
+                        </Button>
                         <Button
                             onClick={handleProcess}
                             disabled={

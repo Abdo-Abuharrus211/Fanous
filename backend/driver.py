@@ -6,36 +6,34 @@ and facilitates processing business logic.
 
 from hf_model import init_model as init_hf_model, caption as hf_caption, generate_name as hf_generate_name
 from model import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
+from model_modes import ModelMode
 
 
 class Driver:
-    def __init__(self, session_id: str = "default"):
+    def __init__(self, mode: ModelMode, session_id: str = "default"):
         self.session_id = session_id
         self._model = None
-        self._tokenizer = None
-        self._vl_model = None
+        self.model_mode = mode
         self.state = {}
 
     @property
-    def model_pair(self):
+    def get_model(self):
         if self._model is None:
-            self._model, self._tokenizer = init_hf_model()
-        return self._model, self._tokenizer
+            if self.model_mode is ModelMode.huggingface:
+                self._model = init_hf_model()
+            else:
+                self._model = init_vl_model()
+        return self._model
 
-    def vl_model(self):
-        if self._vl_model is None:
-            self._vl_model = init_vl_model()
-        return self._vl_model
-
-    async def process_with_tokenizer(self, image_bytes: bytes) -> dict:
-        model, tokenizer = self.model_pair
-        description = hf_caption(model, tokenizer, image_bytes)
-        name = hf_generate_name(model, tokenizer, image_bytes)
+    async def process_with_hf(self, image_bytes: bytes) -> dict:
+        model = self.get_model
+        description = hf_caption(model, image_bytes)
+        name = hf_generate_name(model, description)
 
         return {"name": name, "description": description}
 
     async def process(self, image_bytes: bytes) -> dict:
-        model = self.vl_model()
+        model = self.get_model
         description = vl_caption(model, image_bytes)
         name = vl_generate_name(model, image_bytes)
 

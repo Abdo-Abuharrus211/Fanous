@@ -5,15 +5,6 @@ tasks I need to get to
 - [X] Create driver class for handling state from HTTP request
 - [X] Create class for inference?
 - [X] Write Dockerfile for Compose
-- [ ] Test
-- [ ] Refactor model modules and Driver class to be more modular and use models types
-
-API contract from Laravel:
-```text
-API Contract (from frontend code)
-POST /caption
-  Content-Type: multipart/form-data
-  Body: image (file)
-  
-Response: { "name": "descriptive_name", "description": "full caption" }
-```
+- [X] Test
+- [X] Refactor model modules and Driver class to be more modular and use models types
+- [ ] Abstract the model classes, then refactor hf_model extend model

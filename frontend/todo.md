@@ -9,15 +9,19 @@ in-project way of tracking progress and tasks.
 - [X] call laravel endpoint to store photos
 - [X] Modify home page to use my elements
 - [X] Route home 
+- [X] wire up Analyze button to POST `/photos/process` and update card states
+- [X] wire up Download button to POST `/photos/download` and trigger zip download
+- [X] add error toasts for Analyze and Download failures
+- [X] implement backend /caption endpoint (Moondream2)
 - [ ] style
-- [ ] wire up Analyze button to POST `/photos/process` and update card states
-- [ ] wire up Download button to POST `/photos/download` and trigger zip download
-- [ ] fix upload flash redirect loses selected state, consider Inertia partial reloads
-- [ ] add loading/processing indicator/animation on cards while backend analyzes
-- [ ] add select all / deselect all toggle?
-- [ ] add error toasts for Analyze and Download failures
+- [X] Allow user to click on card after processing to read the new description
+- [X] Increase allowed image size, most photos can be 4-6MB... "exceeds the limit of 8388608 bytes"
+- [X] fix upload flash redirect loses selected state, consider Inertia partial reloads
+- [X] add loading/processing indicator/animation on cards while backend analyzes
+- [ ] Batch processing? For example select 5 at a time and wait
+- [X] add select all / deselect all toggle?
+- [ ] Implement loading animation during processing, maybe include a log-styled "terminal"?
 - [ ] clean up orphaned temp files, implement scheduled job for stale sessions
-- [ ] implement backend /caption endpoint (Moondream2)
 - [ ] Make session not require user login for 10 photos but place auth beyond that
 - [ ] Add rate-limiter for 10 photos per 24hr ??
 - [ ] Responsive design? For mobile?

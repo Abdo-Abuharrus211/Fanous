@@ -56,8 +56,7 @@ class PhotoController extends Controller
             $files,
         );
 
-        // Inertia doesn't expect JSON response so redirect
-        return redirect()->route('photos.index');
+        return response()->json(['photos' => $photos]);
     }
 
     /**
