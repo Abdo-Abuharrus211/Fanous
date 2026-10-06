@@ -1,5 +1,4 @@
 import { useCallback, useRef, useState } from 'react';
-import { router } from '@inertiajs/react';
 import { Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -77,31 +76,35 @@ export default function DropZone({
         files.forEach((file) => formData.append('photos[]', file));
 
         try {
-            // Using inertia router to post
-            router.post(
-                '/photos/upload',
-                formData,
-                {
-                    onSuccess: (page) => {
-                        const response = page.props as unknown as {
-                            photos?: UploadedPhoto[];
-                        };
-                        if (response.photos && onPhotosUploaded) {
-                            onPhotosUploaded(response.photos);
-                        }
-                    },
-                    onError: (errors) => {
-                        console.error('Upload failed:', errors);
-                        const messages = Object.values(errors).join(', ');
-                        toast.error('Upload failed', { description: messages });
-                    },
-                    forceFormData: true,
-                    preserveScroll: true,
+            const response = await fetch('/photos/upload', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content ?? '',
                 },
-            );
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const data = await response.json().catch(() => null);
+                throw new Error(
+                    data?.message ?? 'Upload failed',
+                );
+            }
+
+            const data = await response.json();
+            if (data.photos && onPhotosUploaded) {
+                onPhotosUploaded(data.photos);
+            }
         } catch (error) {
-            console.error('Upload error:', error);
-            toast.error('Upload error', { description: 'Something went wrong while uploading.' });
+            console.error('Upload failed:', error);
+            toast.error('Upload failed', {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : 'Something went wrong while uploading.',
+            });
         } finally {
             setIsUploading(false);
         }
