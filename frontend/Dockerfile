@@ -26,9 +26,12 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Copy dependency files first for layer caching
 COPY fanous/composer.json fanous/composer.lock ./
 
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
 COPY fanous/ .
+
+# Run composer scripts now that artisan exists
+RUN composer run-script post-autoload-dump
 # Generate Wayfinder types (required by Vite build step)
 RUN php artisan wayfinder:generate
 
