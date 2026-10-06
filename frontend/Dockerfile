@@ -1,4 +1,4 @@
-FROM php:8.4-fpm AS base
+FROM php:8.4-fpm
 
 WORKDIR /app
 
@@ -16,8 +16,15 @@ RUN apt-get update && apt-get install -y \
     unzip \
     curl \
     git \
+    ca-certificates \
+    gnupg \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql pdo_sqlite mbstring exif gd zip \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -28,29 +35,20 @@ COPY fanous/composer.json fanous/composer.lock ./
 
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --no-scripts
 
+# Copy the full app
 COPY fanous/ .
 
 # Run composer scripts now that artisan exists
 RUN composer run-script post-autoload-dump
-# Generate Wayfinder types (required by Vite build step)
-RUN php artisan wayfinder:generate
 
-
-# Install Node & build assets
-FROM node:22-alpine AS node-builder
-WORKDIR /app
-COPY --from=base /app/resources ./resources
-COPY --from=base /app/routes ./routes
-COPY fanous/package.json fanous/package-lock.json fanous/tsconfig.json fanous/vite.config.ts ./
+# Install Node deps and build assets
 RUN npm ci
 RUN npm run build
 
-# Final image
-FROM base AS production
-
+# Copy php.ini
 COPY fanous/php.ini /usr/local/etc/php/conf.d/fanous.ini
-COPY --from=node-builder /app/public/build ./public/build
 
+# Set permissions
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 ENV APP_ENV=production
