@@ -46,7 +46,7 @@ export default function PhotoCard({
         <div
             className={cn(
                 'group relative overflow-hidden rounded-lg border bg-card transition-colors hover:border-primary/50',
-                selected && 'border-primary ring-2 ring-primary/20',
+                selected && 'border-2 border-primary ring-2 ring-primary/20',
             )}
         >
             <div
