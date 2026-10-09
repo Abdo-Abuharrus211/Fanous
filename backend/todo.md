@@ -8,3 +8,6 @@ tasks I need to get to
 - [X] Test
 - [X] Refactor model modules and Driver class to be more modular and use models types
 - [ ] Abstract the model classes, then refactor hf_model extend model
+## Modal Specific
+- [X] Create Modal module to run server
+- [ ] Setup `modal.Volume` to cache model weights and only download once
