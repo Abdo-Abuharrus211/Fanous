@@ -28,7 +28,7 @@ class Driver:
     async def process_with_hf(self, image_bytes: bytes) -> dict:
         model = self.get_model
         description = hf_caption(model, image_bytes)
-        name = hf_generate_name(model, description)
+        name = hf_generate_name(description)
 
         return {"name": name, "description": description}
 
