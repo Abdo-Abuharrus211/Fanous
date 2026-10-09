@@ -8,3 +8,4 @@ tasks I need to get to
 - [X] Test
 - [X] Refactor model modules and Driver class to be more modular and use models types
 - [ ] Abstract the model classes, then refactor hf_model extend model
+- [ ] Once `demo-prod` branch is online, create a `self-host` deployment branch for OSS self-hosting.
