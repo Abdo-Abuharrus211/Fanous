@@ -5,7 +5,7 @@ from model_modes import ModelMode
 
 app = FastAPI()
 
-DRIVER = Driver(mode=ModelMode.huggingface)
+DRIVER = Driver(mode=ModelMode.moondream_direct)
 
 
 @app.get("/")
