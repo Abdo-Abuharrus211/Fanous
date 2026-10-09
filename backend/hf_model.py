@@ -33,21 +33,28 @@ def generate_name(model, desc: str) -> str:
     """
     Derive a human-readable filename from the image-caption
     """
-    # prompt = (
-    #     "Generate a short, descriptive, human-friendly filename for this photo. "
-    #     "Use only lowercase letters, numbers, and hyphens. No spaces or special characters. "
-    #     "Keep it under 80 characters and descriptive of the main subject of the photo. Return only the filename, nothing else."
-    # )
+    prompt = (
+        "Generate a short, memorable filename for this photo that captures its specific subject and scene. "
+        "Prefer specific names over generic categories — a Ferrari is a 'ferrari', not a 'car'. "
+        "Think about what detail makes this photo memorable and lead with that. "
+        "Example: a classic Ferrari parked at a beach near a fruit stall should be 'ferrari-and-fruits-by-beach', not 'red-car-beach-backdrop'. "
+        "Use only lowercase letters, numbers, and hyphens. Under 50 characters. Return only the filename, no extension, nothing else."
+    )
+    result = model.query(prompt, desc)
+    name = result["answer"].strip().strip('"').strip()
+    return name
 
+
+def extract_name(caption: str) -> str:
+    """
+    Extract a photo's new name from the generated caption
+    """
     # articles & prepositions to skip
     skip = {"a", "an", "the", "is", "are", "was", "in", "on", "at", "of", "and", "to", "for", "with"}
-    words = desc.lower().split()
+    words = caption.lower().split()
     # Take first 4-5 meaningful words
     meaningful = [w.strip(".,;:!?\"'()") for w in words if w.strip(".,;:!?\"'()").lower() not in skip]
     name = meaningful[:5]
-    # prompt model for name from desc - not using anymore but keep for ref
-    # result = model.query(prompt, desc)
-    # name = result["answer"].strip().strip('"').strip()
     if not name:
         name = "photo"
     result = "-".join(name)
