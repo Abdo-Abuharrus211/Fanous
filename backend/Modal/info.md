@@ -1,8 +1,13 @@
 # Introduction
-this directory houses modules used to run the Moondream model on Modal's platform and infrastructure.
+
+For demo purposes, deploying a version of the app onto Modal's platform.
+This directory houses modules used to run the service on Modal's platform and infrastructure, utilizing scalable
+serverless capabilities and GPU inference.
 
 # Running
-To deploy this on Modal  run this command:
+
+To deploy this on Modal run this command:
+
 ```shell
 uv add modal
 modal deploy /backend/Modal/modal_server.py
