@@ -8,7 +8,6 @@ import os
 
 import torch
 from PIL import Image
-from click import prompt
 from transformers import AutoModelForCausalLM
 
 TOKEN = os.environ.get("HF_TOKEN")
