@@ -47,7 +47,7 @@ def generate_name(model, desc: str) -> str:
 
 def extract_name(caption: str) -> str:
     """
-    Extract a photo's new name from the generated caption
+    Extract a photo's new name from the generated caption using text-only parsing
     """
     # articles & prepositions to skip
     skip = {"a", "an", "the", "is", "are", "was", "in", "on", "at", "of", "and", "to", "for", "with"}
