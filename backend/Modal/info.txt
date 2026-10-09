@@ -1,1 +1,0 @@
-this directory houses modules used to run the Moondream model on Modal's platform and infrastructure.
