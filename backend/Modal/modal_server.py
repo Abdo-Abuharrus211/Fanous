@@ -16,13 +16,13 @@ image = (
 app = modal.App("Fanous-VL", image=image)
 
 
-@app.cls(gpu="T4", min_containers=1, scaledown_window=300)
+@app.cls(gpu="T4", scaledown_window=300)
 class FanousServer:
     @modal.enter()
     def boot_up(self):
         from driver import Driver
         from model_modes import ModelMode
-        self.driver = Driver(mode=ModelMode.moondream_direct)
+        self.driver = Driver(mode=ModelMode.huggingface)
 
     @modal.asgi_app()
     def asgi(self):
