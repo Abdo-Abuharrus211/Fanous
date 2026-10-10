@@ -10,5 +10,6 @@ To deploy this on Modal run this command:
 
 ```shell
 uv add modal
+odal secret create hf-token HF_TOKEN=xxx
 modal deploy /backend/Modal/modal_server.py
 ```
