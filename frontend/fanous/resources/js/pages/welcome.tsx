@@ -1,5 +1,6 @@
 // This is the landing page, welcomes the user and redirects to '/photos'
 
+import Footer from '@/components/ui/footer';
 import { Head, Link } from '@inertiajs/react';
 
 export default function Welcome() {
@@ -19,6 +20,7 @@ export default function Welcome() {
                     Get Started
                 </Link>
             </div>
+            <Footer />
         </>
     );
 }
