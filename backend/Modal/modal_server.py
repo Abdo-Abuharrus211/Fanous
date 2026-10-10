@@ -3,12 +3,16 @@ from pathlib import Path
 
 BACKEND_DIR = Path(__file__).parent.parent
 
-image = modal.Image.debian_slim().pip_install(
-    "fastapi[standard]>=0.115.0",
-    "moondream>=0.1.0",
-    "pillow>=10.0.0",
-).workdir("/app").add_local_dir(f"{BACKEND_DIR}/", "/", copy=True)
-
+image = (
+    modal.Image.debian_slim()
+    .workdir("/app")
+    # .add_local_file(str(BACKEND_DIR/"pyproject.toml"), remote_path="/app", copy=True)
+    # .add_local_file(str(BACKEND_DIR/"uv.lock"), remote_path="/app", copy=True)
+    .add_local_dir(str(BACKEND_DIR), "/app", copy=True)
+    .uv_sync()
+    .env({"PYTHONPATH": "/app"})
+)
+# Modal necessitates this be called "app"
 app = modal.App("Fanous-VL", image=image)
 
 
