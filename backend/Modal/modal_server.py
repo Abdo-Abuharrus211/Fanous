@@ -7,12 +7,12 @@ image = modal.Image.debian_slim().pip_install(
     "fastapi[standard]>=0.115.0",
     "moondream>=0.1.0",
     "pillow>=10.0.0",
-).workdir("/app").copy_local_dir(str(BACKEND_DIR), ".")
+).workdir("/app").add_local_dir(f"{BACKEND_DIR}/", "/", copy=True)
 
-modal_app = modal.App("Fanous-VL", image=image)
+app = modal.App("Fanous-VL", image=image)
 
 
-@modal_app.cls(gpu="T4", keep_warm=1, scaledown_window=300)
+@app.cls(gpu="T4", min_containers=1, scaledown_window=300)
 class FanousServer:
     @modal.enter()
     def boot_up(self):
