@@ -111,7 +111,7 @@ class PhotoController extends Controller
             }
 
             try {
-                $response = Http::timeout(80)
+                $response = Http::timeout(180)
                     ->attach('image', $contents, basename($photo->tempPath))
                     ->post("{$backendUrl}/caption");
 
