@@ -8,9 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Http\Request;
-use Illuminate\Cache\RateLimiter;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Cache\RateLimiting\Limit;
-
 
 class AppServiceProvider extends ServiceProvider
 {
