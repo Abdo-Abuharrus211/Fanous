@@ -282,7 +282,7 @@ class PhotoController extends Controller
      * 
      * @return int the number of attemps 
      */
-    public function getQuota(string $session, string $ipAddress): int
+    public function getQuota(string $session, string $ipAddress)
     {
         $todaysDate = now()->toDateString();
         $quotaKey = "daily_quota:{$ipAddress}:{$todaysDate}";
