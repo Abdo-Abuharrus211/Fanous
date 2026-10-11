@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Cache;
 
 class PhotoController extends Controller
 {
@@ -62,18 +63,26 @@ class PhotoController extends Controller
     /**
      * Send photos to the backend API for analysis, then update with results.
      *
-     * @return JsonResponse
+     * @return JsonResponse resuls containing the new name and description of what the photo depicts
      */
     public function process(PhotoProcessRequest $request)
     {
         $sessionId = $this->sessionId($request);
-        $quoatLeft = $request->session()->get("processing_quota");
 
-        if ($quoatLeft <= 0) {
+        // Checking quotas from Cache - this can be moved to dedicated Middleware down the line...
+        $ipAddress = $request->ip();
+        $todaysDate = now()->toDateString();
+        $quotaKey = "daily_quota:{$ipAddress}:{$todaysDate}";
+        $quotaLeft = Cache::get($quotaKey);
+        // Check quota left
+        if (10 <= $quotaLeft) {
             return response()->json([
-                'error' => 'Quota ran out'
+                'error' => 'Daily quota ran out. Please try again in 24hrs.'
             ], 429);
         }
+
+        Cache::increment($quotaKey, 1);
+        Cache::put($quotaKey, $quotaLeft + 1, now()->addHours(24));
 
         $photoIds = $request->input('photo_ids', []);
 
@@ -273,7 +282,6 @@ class PhotoController extends Controller
         if (! $sessionId) {
             $sessionId = Str::ulid()->toString();
             $request->session()->put('photo_session_id', $sessionId);
-            $request->session()->put("processing_quota", 7);
         }
 
         return $sessionId;
