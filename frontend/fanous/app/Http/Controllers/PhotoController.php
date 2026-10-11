@@ -67,6 +67,14 @@ class PhotoController extends Controller
     public function process(PhotoProcessRequest $request)
     {
         $sessionId = $this->sessionId($request);
+        $quoatLeft = $request->session()->get("processing_quota");
+
+        if ($quoatLeft <= 0) {
+            return response()->json([
+                'error' => 'Quota ran out'
+            ], 429);
+        }
+
         $photoIds = $request->input('photo_ids', []);
 
         if (empty($photoIds)) {
@@ -136,6 +144,9 @@ class PhotoController extends Controller
                             'newDescription' => $description,
                         ])),
                     );
+                    # decrement available quota on successful processing
+                    $currentTries = $request->session()->get("processing_quota");
+                    $request->session()->put("processing_quota", $currentTries - 1);
                 } else {
                     $results[] = [
                         'id' => $photoId,
@@ -262,6 +273,7 @@ class PhotoController extends Controller
         if (! $sessionId) {
             $sessionId = Str::ulid()->toString();
             $request->session()->put('photo_session_id', $sessionId);
+            $request->session()->put("processing_quota", 7);
         }
 
         return $sessionId;
