@@ -74,11 +74,14 @@ class PhotoController extends Controller
         $todaysDate = now()->toDateString();
         $quotaKey = "daily_quota:{$ipAddress}:{$todaysDate}";
         $quotaLeft = Cache::get($quotaKey);
-        // Check quota left
-        if (10 <= $quotaLeft) {
-            return response()->json([
-                'error' => 'Daily quota ran out. Please try again in 24hrs.'
-            ], 429);
+
+        if (!app()->environment('local', 'development', 'dev') && !env('FANOUS_DEV_MODE', false)) {
+            // Check quota left
+            if (10 <= $quotaLeft) {
+                return response()->json([
+                    'error' => 'Daily quota ran out. Please try again in 24hrs.'
+                ], 429);
+            }
         }
 
         Cache::increment($quotaKey, 1);
