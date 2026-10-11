@@ -30,7 +30,7 @@
                 background-color: oklch(0.145 0 0);
             }
         </style>
-
+        {{-- TODO: replace with custom icon --}}
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
