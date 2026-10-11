@@ -32,6 +32,8 @@ class PhotoController extends Controller
         return Inertia::render('photos', [
             'sessionId' => $sessionId,
             'photos' => array_map(fn(Photo $p) => $p->toArray(), $photos),
+            // placeholder fro passing quota prop
+            'quota' => $this->getQuota($sessionId, $request->ip()),
         ]);
     }
 
@@ -273,6 +275,19 @@ class PhotoController extends Controller
             'Content-Type' => $photo->mimeType,
             'Cache-Control' => 'no-store, private',
         ]);
+    }
+
+    /**
+     * Get the current quota for session and IP address
+     * 
+     * @return int the number of attemps 
+     */
+    public function getQuota(string $session, string $ipAddress): int
+    {
+        $todaysDate = now()->toDateString();
+        $quotaKey = "daily_quota:{$ipAddress}:{$todaysDate}";
+        $quotaLeft = Cache::get($quotaKey);
+        return $quotaLeft;
     }
 
     /**

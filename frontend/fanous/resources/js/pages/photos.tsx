@@ -12,6 +12,7 @@ export interface PagePhoto extends UploadedPhoto {
 interface PhotosProps {
     sessionId: string;
     photos?: UploadedPhoto[];
+    quota?: number;
 }
 
 export default function Photos({ photos: initialPhotos }: PhotosProps) {
