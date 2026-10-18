@@ -1,0 +1,82 @@
+@media (prefers-color-scheme: light) {
+    :root {
+        --text: hsl(28, 32%, 8%);
+        --background: hsl(33, 43%, 96%);
+        --primary: hsl(32, 59%, 26%);
+        --secondary: hsl(31, 72%, 67%);
+        --accent: hsl(31, 85%, 47%);
+        --destructive: hsl(357, 100%, 45%);
+        --destructive-foreground: hsl(357, 100%, 45%);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text: hsl(30, 33%, 92%);
+        --background: hsl(30, 45%, 4%);
+        --primary: hsl(32, 59%, 74%);
+        --secondary: hsl(31, 72%, 33%);
+        --accent: hsl(31, 85%, 53%);
+        --destructive: hsl(359, 69%, 30%);
+        --destructive-foreground: hsl(357, 96%, 58%);
+    }
+}
+
+:root {
+    /* ff and ff2 fonts */
+    --ff1: "Noto Sans", sans-serif;
+    --ff2: "Archivo", sans-serif;
+    /* font sizes */
+    --fsize1: 1rem;
+    --fsize2: 1.125rem;
+    --fsize3: 1.25rem;
+    --fsize4: 1.5rem;
+    --fsize5: 0.875rem;
+    /* Spacings */
+    --spacing1: 4px;
+    --spacing2: 8px;
+    --spacing3: 16px;
+    --spacing4: 20px;
+    --spacing5: 40px;
+    --spacing6: 80px;
+    --spacing7: 160px;
+    --spacing8: 320px;
+    /* fonts in typography file */
+    --h1: 700 4rem/1.2em var(--ff2);
+    --h2: 600 2rem/1.2em var(--ff2);
+    --p: 1rem/1.5em var(--ff1);
+
+    --successGreen: hsl(120, 48%, 67%);
+    --focus: 2px solid lightblue;
+}
+
+
+
+/* Utilities */
+.icon {
+    margin-left: var(--spacing3);
+    width: var(--spacing5);
+    vertical-align: middle;
+}
+
+.top-accent-tab {
+    border-top: var(--spacing1) solid var(--accent);
+    border-top-left-radius: var(--spacing1);
+    border-top-right-radius: var(--spacing1);
+}
+
+.left-accent-tab {
+    border-left: var(--spacing1) solid var(--accent);
+    border-radius: var(--spacing1);
+}
+
+.container {
+    margin: var(--spacing3) auto;
+    padding: var(--spacing4);
+}
+
+.card {
+    background-color: var(--subbackground);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: var(--spacing1);
+}
