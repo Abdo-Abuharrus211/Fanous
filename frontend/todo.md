@@ -14,7 +14,7 @@ in-project way of tracking progress and tasks.
 - [X] add error toasts for Analyze and Download failures
 - [X] implement backend /caption endpoint (Moondream2)
 - [ ] Introduce user authentication - important once MVP is done
-- [ ] style
+- [X] style
 - [X] Allow user to click on card after processing to read the new description
 - [X] Increase allowed image size, most photos can be 4-6MB... "exceeds the limit of 8388608 bytes"
 - [X] fix upload flash redirect loses selected state, consider Inertia partial reloads
@@ -25,4 +25,5 @@ in-project way of tracking progress and tasks.
 - [ ] clean up orphaned temp files, implement scheduled job for stale sessions
 - [X] Make session not require user login for 10 photos but place auth beyond that
 - [X] Add rate-limiter for 10 photos per 24hr ??
+- [ ] Add video-loop on landing page
 - [ ] Responsive design? For mobile?
