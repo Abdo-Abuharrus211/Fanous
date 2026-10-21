@@ -52,6 +52,14 @@
     --focus: 2px solid lightblue;
 }
 
+body {
+    /* use your defined for globals for bg, font, and color */
+    min-height: 100vh;
+    text-wrap: balance;
+    font: var(--p);
+    color: var(--text);
+    background: var(--background);
+}
 
 a:hover {
     color: var(--secondary);
