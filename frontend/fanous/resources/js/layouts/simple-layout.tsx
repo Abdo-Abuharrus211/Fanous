@@ -13,6 +13,10 @@ export default function SimpleLayout({
                     <Link href="/" className="text-3xl flex items-center gap-2">
                         Fanous
                     </Link>
+                <div className='flex justify-center gap-4'>
+                    <Link href="">About</Link>
+                    <a href="">Contact</a>
+                </div>
                 </div>
             </header>
             <main className="mx-auto max-w-7xl px-6 py-8">
