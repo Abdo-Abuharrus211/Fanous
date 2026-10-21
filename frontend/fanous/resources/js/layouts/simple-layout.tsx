@@ -10,7 +10,7 @@ export default function SimpleLayout({
         <div className="flex min-h-screen flex-col bg-background text-foreground">
             <header className="border-b px-6 py-4">
                 <div className="mx-auto flex max-w-7xl items-center justify-between">
-                    <Link href="/" className="text-3xl flex items-center gap-2">
+                    <Link href="/" className="text-3xl flex items-center gap-2" style={{font: 'var(--h2)'}}>
                         Fanous
                     </Link>
                 <div className='flex justify-center gap-4'>
