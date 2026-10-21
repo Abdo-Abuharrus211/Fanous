@@ -2,6 +2,7 @@
     :root {
         --text: hsl(28, 32%, 8%);
         --background: hsl(33, 43%, 96%);
+        --subbackground: hsl(33, 43%, 89%);
         --primary: hsl(32, 59%, 26%);
         --secondary: hsl(31, 72%, 67%);
         --accent: hsl(31, 85%, 47%);
@@ -14,6 +15,7 @@
     :root {
         --text: hsl(30, 33%, 92%);
         --background: hsl(30, 45%, 4%);
+        --subbackground: hsl(30, 45%, 11%);
         --primary: hsl(32, 59%, 74%);
         --secondary: hsl(31, 72%, 33%);
         --accent: hsl(31, 85%, 53%);
