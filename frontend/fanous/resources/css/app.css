@@ -10,10 +10,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji';
+    --font-sans: var(--ff1);
     --font-ff1: var(--ff1);
     --font-ff2: var(--ff2);
 
@@ -113,15 +110,8 @@
     }
 }
 
-/* Bridge: your vars also available under .dark class for manual toggle */
+/* Shadcn fill-ins for manual dark mode toggle */
 .dark {
-    --text: hsl(30, 33%, 92%);
-    --background: hsl(30, 45%, 4%);
-    --primary: hsl(32, 59%, 74%);
-    --secondary: hsl(31, 72%, 33%);
-    --accent: hsl(31, 85%, 53%);
-    --destructive: hsl(359, 69%, 30%);
-    --destructive-foreground: hsl(357, 96%, 58%);
     --card: hsl(30, 45%, 6%);
     --card-foreground: var(--text);
     --popover: hsl(30, 45%, 6%);
