@@ -14,7 +14,7 @@
 @media (prefers-color-scheme: dark) {
     :root {
         --text: hsl(30, 33%, 92%);
-        --background: hsl(30, 45%, 4%);
+        --background: hsl(120, 43%, 4%);
         --subbackground: hsl(30, 45%, 11%);
         --primary: hsl(32, 59%, 74%);
         --secondary: hsl(31, 72%, 33%);
