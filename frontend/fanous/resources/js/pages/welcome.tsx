@@ -7,18 +7,19 @@ export default function Welcome() {
     return (
         <>
             <Head title="Welcome" />
-            <section className="relative overflow-hidden">
+            <section id="welcome-section" className='p-4'>
                 {/* TODO: add some video animation (loop) of how it works as the hook */}
                 {/* <img src='/amber-rings.svg' className='absolute inset-0 h-full w-full object-cover'
                 aria-hidden="true"
                 ></img> */}
-                <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+                <div className="flex flex-col justify-content px-4 my-auto">
                     <h1
                         className="mb-4 tracking-tight"
                         style={{ font: 'var(--h1)' }}
                     >
                         Fanous
                     </h1>
+                    <h2 style={{color: 'var(--secondary'}}>Never lose a photo!</h2>
 
                     <p className="mx-auto mb-8 max-w-xlg text-muted-foreground" style={{ font: 'var(--p)' }}>
                         No more forgettable file names deteremined by your camera!<br/>
