@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Log;
 class PhotoController extends Controller
 {
 
-    private int $ColdStartDuration = 300;
+    private int $ServerScaledownDuration = 300;
 
     /**
      * Show the photo upload page.
@@ -307,7 +307,7 @@ class PhotoController extends Controller
             if (!$response->successful()) {
                 Log::warning("Failed to wake up server.", ['body' => $response->body(), 'status' => $response->status()]);
             } else {
-                Cache::put("server_awake", true, now()->addSeconds($this->ColdStartDuration));
+                Cache::put("server_awake", true, now()->addSeconds($this->ServerScaledownDuration));
             }
         } catch (\Exception $e) {
             Log::error("Error waking up server!", ["message" => $e->getMessage()]);
