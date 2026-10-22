@@ -16,7 +16,7 @@ void createInertiaApp({
     layout: (name) => {
         switch (true) {
             case name === 'welcome':
-                return null;
+                return SimpleLayout;
             case name === 'photos':
                 return SimpleLayout;
             // boiler plate layouts
