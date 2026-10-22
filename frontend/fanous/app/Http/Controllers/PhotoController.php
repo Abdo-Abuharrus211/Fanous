@@ -17,9 +17,13 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class PhotoController extends Controller
 {
+
+    private int $ColdStartDuration = 300;
+
     /**
      * Show the photo upload page.
      */
@@ -28,6 +32,10 @@ class PhotoController extends Controller
         $sessionId = $this->sessionId($request);
 
         $photos = Photo::listForSession($sessionId);
+
+        $serverAwake = Cache::get("server_awake");
+
+        if (!$serverAwake) $this->wakeUpServer();
 
         return Inertia::render('photos', [
             'sessionId' => $sessionId,
@@ -290,6 +298,21 @@ class PhotoController extends Controller
         return $quotaLeft;
     }
 
+    private function wakeUpServer()
+    {
+        $backendUrl = config('services.fanous_backend.url');
+        try {
+            $response = Http::timeout(30)
+                ->get("{$backendUrl}/");
+            if (!$response->successful()) {
+                Log::warning("Failed to wake up server.", ['body' => $response->body(), 'status' => $response->status()]);
+            } else {
+                Cache::put("server_awake", true, now()->addSeconds($this->ColdStartDuration));
+            }
+        } catch (\Exception $e) {
+            Log::error("Error waking up server!", ["message" => $e->getMessage()]);
+        }
+    }
     /**
      * Get or create a session identifier for temp file grouping.
      */
