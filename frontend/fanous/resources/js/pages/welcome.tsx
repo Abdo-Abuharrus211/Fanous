@@ -2,6 +2,7 @@
 
 import Footer from '@/components/ui/footer';
 import { Head, Link } from '@inertiajs/react';
+import { Underline } from 'lucide-react';
 
 export default function Welcome() {
     return (
@@ -30,10 +31,11 @@ export default function Welcome() {
                         className="mx-auto mb-8 max-w-xlg text-muted-foreground"
                         style={{ font: 'var(--p)' }}
                     >
-                        No more forgettable file names deteremined by your
-                        camera!
+                        No more <span><a href="https://en.wikipedia.org/wiki/Design_rule_for_Camera_File_system" 
+                        style={{ textDecoration: 'Underline' }}>DCF</a></span> file names by your
+                        camera;
                         <br />
-                        Rename your photos with human-friendly names instead
+                        rename your photos with human-friendly names instead
                     </p>
                     <Link
                         href="/photos"
