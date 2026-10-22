@@ -33,7 +33,6 @@ export default function Welcome() {
                     </Link>
                 </div>
             </section >
-            <Footer />
         </>
     );
 }
