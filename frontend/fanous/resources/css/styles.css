@@ -61,6 +61,14 @@ body {
     background: var(--background);
 }
 
+h1{
+    font: var(--h1);
+}
+
+h2 {
+    font: var(--h2);
+}
+
 a:hover {
     color: var(--secondary);
 }
