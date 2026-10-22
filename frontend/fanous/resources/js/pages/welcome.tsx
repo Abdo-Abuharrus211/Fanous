@@ -10,7 +10,7 @@ export default function Welcome() {
             <Head title="Welcome" />
             <section
                 id="welcome-section"
-                className="flex min-h-screen items-center justify-center p-4"
+                className="flex items-center justify-center p-4 mt-64"
             >
                 {/* TODO: add some video animation (loop) of how it works as the hook */}
                 {/* <img src='/amber-rings.svg' className='absolute inset-0 h-full w-full object-cover'
