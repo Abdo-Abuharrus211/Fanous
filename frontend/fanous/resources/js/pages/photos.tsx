@@ -77,6 +77,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         }
     }, []);
 
+
     /**
      * Retry processing photos that failed.
      * 
@@ -147,6 +148,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const selectedPhotos = photos.filter((p) => p.selected);
     const allSelected = photos.length > 0 && photos.every((p) => p.selected);
 
+
     const handleSelectAll = () => {
         const newState = !allSelected;
         setPhotos((prev) =>
@@ -155,6 +157,11 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     };
 
 
+    /**
+     * Process the selected photos, make analysis request to backend.
+     * 
+     * Also handles state and mapping the new results.  
+     */
     const handleProcess = async () => {
         if (selectedPhotos.length === 0) return;
         setIsProcessing(true);
@@ -231,6 +238,12 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         }
     };
 
+
+    /**
+     * Download the images from the backend.
+     * 
+     * handles retrieving the compressed files and downloading them via browser.
+     */
     const handleDownload = async () => {
         if (selectedPhotos.length === 0) return;
         setIsDownloading(true);
