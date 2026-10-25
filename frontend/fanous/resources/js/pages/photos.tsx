@@ -83,6 +83,13 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
      * @param photoId string ID for the photo that failed
      */
     const retryPhoto = useCallback(async (photoId: string) => {
+        // set status to processing
+        setPhotos((prev) =>
+            prev.map((p) =>
+                p.id === photoId ? { ...p, status: 'processing' } : p,
+            ),
+        );
+
         try {
             const response = await fetch('/photos/process', {
                 method: 'POST',
