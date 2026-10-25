@@ -128,12 +128,18 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                 }),
             );
         } catch (error) {
-            toast.error("Retry Error!", {
+            console.error('Error retrying photo', error);
+            toast.error('Retry Error!', {
                 description:
                     error instanceof Error
                         ? error.message
-                        : `Something went wrong while processing retry for photo with id : ${photoId}.`,
+                        : `Something went wrong while processing retry for photo with id: ${photoId}.`,
             });
+            setPhotos((prev) =>
+                prev.map((p) =>
+                    p.id === photoId ? { ...p, status: 'pending' } : p,
+                ),
+            );
         }
     }, []);
 
