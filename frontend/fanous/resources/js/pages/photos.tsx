@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import DropZone, { type UploadedPhoto } from '@/components/drop-zone';
 import PhotoCard from '@/components/photo-card';
@@ -233,18 +233,23 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
             );
 
             // notify user with Toast popup notification and tab title change
-            let successCount = 0;
-            photos.every((p) => {
-                if (p.status == "ready") successCount++;
-            });
+            const successCount = data.results?.filter(
+                (r: { status: string }) => r.status !== 'error',
+            ).length ?? 0;
+            const errorCount = selectedPhotos.length - successCount;
 
-            if (document.visibilityState === "hidden") {
+            if (document.visibilityState === 'hidden' && successCount > 0) {
                 document.title = `${successCount} Done - Fanous`;
             }
 
-            toast.success(`${successCount} photos analyzed`,
-                { description: `Analyzed ${successCount} photos successfully.` }
-            );
+            if (successCount > 0) {
+                toast.success(`${successCount} photo${successCount > 1 ? 's' : ''} analyzed`, {
+                    description:
+                        errorCount > 0
+                            ? `${errorCount} failed. Retry from the card.`
+                            : `All ${successCount} processed successfully.`,
+                });
+            }
 
         } catch (error) {
             console.error('Error processing selected photos', error);
