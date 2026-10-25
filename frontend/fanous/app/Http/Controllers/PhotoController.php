@@ -33,9 +33,9 @@ class PhotoController extends Controller
 
         $photos = Photo::listForSession($sessionId);
 
-        $serverAwake = Cache::get("server_awake");
-
-        if (!$serverAwake) $this->wakeUpServer();
+        // removing because it's syncrhonous, blocking. Comment for reference
+        // $serverAwake = Cache::get("server_awake");
+        // if (!$serverAwake) $this->wakeUpServer();
 
         return Inertia::render('photos', [
             'sessionId' => $sessionId,
@@ -141,7 +141,7 @@ class PhotoController extends Controller
             }
 
             try {
-                $response = Http::timeout(180)
+                $response = Http::timeout(200)
                     ->attach('image', $contents, basename($photo->tempPath))
                     ->post("{$backendUrl}/caption");
 
