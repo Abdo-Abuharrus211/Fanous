@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
             //     return Limit::perMinute(5)->by('ip' . $request->ip());
             // }
 
-            if ($request->sessionId()) {
+            if ($request->session()) {
                 return Limit::perMinute(5)->by('ip' . $request->ip());
             }
 
