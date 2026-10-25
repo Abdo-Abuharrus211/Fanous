@@ -24,6 +24,13 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const [isRemoving, setIsRemoving] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
 
+    // tab visibility listener
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+            document.title = "Photos - Fanous";
+        }
+    })
+
 
     // Add uploaded photos to `photos` array
     const handlePhotosUploaded = (uploaded: UploadedPhoto[]) => {
@@ -218,6 +225,21 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                     return photo;
                 }),
             );
+
+            // notify user with Toast popup notification and tab title change
+            let successCount = 0;
+            photos.every((p) => {
+                if (p.status == "ready") successCount++;
+            });
+
+            if (document.visibilityState === "hidden") {
+                document.title = `${successCount} Done - Fanous`;
+            }
+
+            toast.success(`${successCount} photos analyzed`,
+                { description: `Analyzed ${successCount} photos successfully.` }
+            );
+
         } catch (error) {
             console.error('Error processing selected photos', error);
             toast.error('Process error', {
