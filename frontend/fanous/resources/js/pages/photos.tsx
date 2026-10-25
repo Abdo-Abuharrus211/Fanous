@@ -99,7 +99,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                         'meta[name="csrf-token"]',
                     )?.content ?? '',
                 },
-                body: JSON.stringify(photoId)
+                body: JSON.stringify({ photo_ids: [photoId] }),
             });
 
             if (!response.ok) {
