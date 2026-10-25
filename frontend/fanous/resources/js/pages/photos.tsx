@@ -25,11 +25,17 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const [isDownloading, setIsDownloading] = useState(false);
 
     // tab visibility listener
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") {
-            document.title = "Photos - Fanous";
-        }
-    })
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                document.title = 'Photos - Fanous';
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, []);
 
 
     // Add uploaded photos to `photos` array
