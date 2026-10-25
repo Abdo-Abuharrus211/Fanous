@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import DropZone, { type UploadedPhoto } from '@/components/drop-zone';
 import PhotoCard from '@/components/photo-card';
 import { Button } from '@/components/ui/button';
+import { process } from '@/routes/photos';
 
 export interface PagePhoto extends UploadedPhoto {
     selected: boolean;
@@ -73,6 +74,38 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
 
         } finally {
             setIsRemoving(false);
+        }
+    }, []);
+
+    /**
+     * Retry processing photos that failed.
+     * 
+     * @param photoId string ID for the photo that failed
+     */
+    const retryPhoto = useCallback(async (photoId: string) => {
+        try {
+            const response = await fetch('/photos/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content ?? '',
+                },
+                body: JSON.stringify(photoId)
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error ?? 'Processing failed');
+            }
+        } catch (error) {
+            toast.error("Retry Error!", {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : `Something went wrong while processing retry for photo with id : ${photoId}.`,
+            });
         }
     }, []);
 
@@ -262,6 +295,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                                 selected={photo.selected}
                                 onSelect={handleSelect}
                                 onRemove={removePhoto}
+                                onRetry={retryPhoto}
                             />
                         ))}
                     </div>
