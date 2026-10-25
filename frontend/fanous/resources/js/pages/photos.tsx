@@ -106,6 +106,27 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                 const data = await response.json();
                 throw new Error(data.error ?? 'Processing failed');
             }
+
+            const data = await response.json();
+            const result = data.results?.find(
+                (r: { id: string }) => r.id === photoId,
+            );
+
+            setPhotos((prev) =>
+                prev.map((p) => {
+                    if (p.id !== photoId) return p;
+                    if (result && result.status !== 'error') {
+                        return {
+                            ...p,
+                            newName: result.newName ?? p.newName,
+                            newDescription:
+                                result.newDescription ?? p.newDescription,
+                            status: result.status ?? p.status,
+                        };
+                    }
+                    return { ...p, status: 'error' };
+                }),
+            );
         } catch (error) {
             toast.error("Retry Error!", {
                 description:
