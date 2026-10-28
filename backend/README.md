@@ -9,6 +9,7 @@ Runs on edge, needing only 2 GB of RAM to run on non-GPU nodes.
 
 # Local Dev
 To run the projcet, using the `uv` package manager: `uv run fastapi dev`
+or better yet `uv run uvicorn main:app --reload --port 8001`
 
 
 //TODO: Add more to README
