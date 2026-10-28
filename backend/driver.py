@@ -5,7 +5,7 @@ and facilitates processing business logic.
 # TODO: In future, Will refactor in future to be modular via dependency injection or composition so less repetitive code
 
 from hf_model import init_model as init_hf_model, caption as hf_caption, generate_name as hf_generate_name
-from model import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
+from moondream import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
 from model_modes import ModelMode
 
 
@@ -28,7 +28,7 @@ class Driver:
     async def process_with_hf(self, image_bytes: bytes) -> dict:
         model = self.get_model
         description = hf_caption(model, image_bytes)
-        name = hf_generate_name(model, description)
+        name = hf_generate_name(model, image_bytes)
 
         return {"name": name, "description": description}
 
