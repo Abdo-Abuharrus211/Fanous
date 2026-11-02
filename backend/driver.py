@@ -4,7 +4,7 @@ and facilitates processing business logic.
 """
 # TODO: In future, Will refactor in future to be modular via dependency injection or composition so less repetitive code
 
-from moondream_md import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
+from moondream_md import MoondreamMD as MD_Photon
 from model_modes import ModelMode
 from hf_model import HuggingFaceTransformerModel as HF_Model
 
@@ -22,7 +22,7 @@ class Driver:
             if self.model_mode is ModelMode.huggingface:
                 self._model = HF_Model()
             else:
-                self._model = init_vl_model()
+                self._model = MD_Photon()
         return self._model
 
     async def process(self, image_bytes: bytes) -> dict:
@@ -31,17 +31,6 @@ class Driver:
         name = model.generate_name(image_bytes)
         return {"name": name, "description": description}
 
-    # async def process_with_hf(self, image_bytes: bytes) -> dict:
-    #     model = self.get_model
-    #     description = model.caption(image_bytes)
-    #     name = model.generate_name(image_bytes)
-    #     return {"name": name, "description": description}
-    #
-    # async def process(self, image_bytes: bytes) -> dict:
-    #     model = self.get_model
-    #     description = vl_caption(model, image_bytes)
-    #     name = vl_generate_name(model, image_bytes)
-    #     return {"name": name, "description": description}
 
 def extract_name(img_caption: str) -> str:
     """

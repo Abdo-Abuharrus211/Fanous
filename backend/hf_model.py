@@ -39,6 +39,6 @@ class HuggingFaceTransformerModel(BaseModel):
         Derive a human-readable filename from the image-caption
         """
         image = Image.open(io.BytesIO(image_bytes))
-        result = self.model.query(image, self.caption_prompt)
+        result = self.model.query(image, self.name_gen_prompt)
         name = result["answer"].strip().strip('"').strip()
         return name
