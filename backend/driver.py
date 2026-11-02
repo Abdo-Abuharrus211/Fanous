@@ -2,7 +2,8 @@
 The Driver class manages a session's request state, instances of the VL model,
 and facilitates processing business logic.
 """
-# TODO: In future, Will refactor in future to be modular via dependency injection or composition so less repetitive code
+
+import asyncio
 
 from moondream_md import MoondreamMD as MD_Photon
 from model_modes import ModelMode
@@ -12,23 +13,23 @@ from hf_model import HuggingFaceTransformerModel as HF_Model
 class Driver:
     def __init__(self, mode: ModelMode, session_id: str = "default"):
         self.session_id = session_id
-        self._model = None
+        self._model_instance = None
         self.model_mode = mode
         self.state = {}
 
     @property
-    def get_model(self):
-        if self._model is None:
+    def model(self):
+        if self._model_instance is None:
             if self.model_mode is ModelMode.huggingface:
-                self._model = HF_Model()
+                self._model_instance = HF_Model()
             else:
-                self._model = MD_Photon()
-        return self._model
+                self._model_instance = MD_Photon()
+        return self._model_instance
 
     async def process(self, image_bytes: bytes) -> dict:
-        model = self.get_model
-        description = model.caption(image_bytes)
-        name = model.generate_name(image_bytes)
+        model = self.model
+        description = await asyncio.to_thread(model.caption, image_bytes)
+        name = await asyncio.to_thread(model.generate_name, image_bytes)
         return {"name": name, "description": description}
 
 
