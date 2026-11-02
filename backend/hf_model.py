@@ -8,9 +8,9 @@ import torch
 from PIL import Image
 from transformers import AutoModelForCausalLM
 from model import BaseModel
-from config import Settings
+from config import settings
 
-TOKEN = Settings.hf_token
+TOKEN = settings.hf_token
 
 
 class HuggingFaceTransformerModel(BaseModel):
