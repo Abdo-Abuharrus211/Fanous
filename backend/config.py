@@ -10,7 +10,7 @@ from enum import StrEnum
 
 
 class ModelMode(StrEnum):
-    huggingface = "hf"
+    moondream_hf = "hf"
     moondream_direct = "moon"
 
 
