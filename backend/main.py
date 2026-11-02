@@ -1,10 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from config import Settings
+from config import settings
 from custom_types import CaptionResponse
 from driver import Driver
 
 app = FastAPI()
-DRIVER = Driver(Settings.model_mode)
+DRIVER = Driver(settings.model_mode)
 
 
 @app.get("/")

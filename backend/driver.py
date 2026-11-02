@@ -6,7 +6,7 @@ and facilitates processing business logic.
 import asyncio
 
 from moondream_md import MoondreamMD as MD_Photon
-from model_modes import ModelMode
+from config import ModelMode
 from hf_model import HuggingFaceTransformerModel as HF_Model
 
 
@@ -20,7 +20,7 @@ class Driver:
     @property
     def model(self):
         if self._model_instance is None:
-            if self.model_mode is ModelMode.moondream_huggingface:
+            if self.model_mode is ModelMode.moondream_hf:
                 self._model_instance = HF_Model()
             else:
                 self._model_instance = MD_Photon()
