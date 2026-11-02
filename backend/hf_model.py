@@ -4,14 +4,13 @@ Runs locally on CPU — no GPU required.
 """
 
 import io
-import os
-
 import torch
 from PIL import Image
 from transformers import AutoModelForCausalLM
 from model import BaseModel
+from config import Settings
 
-TOKEN = os.environ.get("HF_TOKEN")
+TOKEN = Settings.hf_token
 
 
 class HuggingFaceTransformerModel(BaseModel):

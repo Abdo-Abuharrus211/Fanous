@@ -4,10 +4,10 @@ The model runs locally on K3s cluster without a GPU
 """
 
 import io
-import os
 import moondream as md
 from PIL import Image
 import model
+from config import Settings
 
 
 class MoondreamMD(model.BaseModel):
@@ -19,7 +19,7 @@ class MoondreamMD(model.BaseModel):
             Uses cloud API if MOONDREAM_API_KEY is set.
             """
         super().__init__()
-        api_key = os.environ.get("MOONDREAM_API_KEY")
+        api_key = Settings.moondream_api_key
         if api_key:
             self.model = md.vl(api_key=api_key)
         else:

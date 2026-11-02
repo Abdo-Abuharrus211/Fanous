@@ -1,11 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-
+from config import Settings
 from custom_types import CaptionResponse
 from driver import Driver
-from model_modes import ModelMode
 
 app = FastAPI()
-DRIVER = Driver(mode=ModelMode.moondream_huggingface)
+DRIVER = Driver(Settings.model_mode)
 
 
 @app.get("/")
