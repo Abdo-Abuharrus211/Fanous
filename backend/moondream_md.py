@@ -22,7 +22,8 @@ class MoondreamMD(model.BaseModel):
         api_key = os.environ.get("MOONDREAM_API_KEY")
         if api_key:
             self.model = md.vl(api_key=api_key)
-        self.model = md.photon("moondream2")
+        else:
+            self.model = md.photon("moondream2")
 
     def caption(self, image_bytes: bytes) -> str:
         """
