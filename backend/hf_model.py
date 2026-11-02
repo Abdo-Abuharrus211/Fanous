@@ -26,6 +26,7 @@ class HuggingFaceTransformerModel(BaseModel):
             trust_remote_code=True,
             dtype=torch.float16,
             token=TOKEN,
+            revision="2025-06-21",
         )
         self.model = model
 
