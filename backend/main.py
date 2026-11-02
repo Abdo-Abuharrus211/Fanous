@@ -1,11 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-
+from config import Settings
+from custom_types import CaptionResponse
 from driver import Driver
-from model_modes import ModelMode
 
 app = FastAPI()
-
-DRIVER = Driver(mode=ModelMode.moondream_direct)
+DRIVER = Driver(Settings.model_mode)
 
 
 @app.get("/")
@@ -25,9 +24,9 @@ async def caption(image: UploadFile = File(...)):
     Response: { "name": "descriptive_name", "description": "full caption" }
     """
     contents = await image.read()
-    processed = await DRIVER.process(contents)
+    processed = await DRIVER.process(image_bytes=contents)
 
     if not processed:
         raise HTTPException(status_code=500, detail="Captioning process failed")
 
-    return {"name": processed["name"], "description": processed["description"]}
+    return CaptionResponse(name=processed["name"], description=processed["description"])

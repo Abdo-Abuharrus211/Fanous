@@ -2,15 +2,17 @@
 
 use App\Http\Controllers\PhotoController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
 Route::inertia('/', 'welcome')->name('home');
 
 Route::get('photos', [PhotoController::class, 'index'])->name('photos.index');
 Route::get('photos/preview/{id}', [PhotoController::class, 'preview'])->name('photos.preview');
 Route::post('/photos/remove', [PhotoController::class, 'remove'])->name('photos.remove');
-Route::post('photos/upload', [PhotoController::class, 'upload'])->name('photos.upload');
-Route::post('photos/process', [PhotoController::class, 'process'])->name('photos.process');
-Route::post('photos/download', [PhotoController::class, 'download'])->name('photos.download');
+Route::post('photos/upload', [PhotoController::class, 'upload'])->name('photos.upload')->middleware('throttle:photos.upload');
+Route::post('photos/process', [PhotoController::class, 'process'])->name('photos.process')->middleware('throttle:photos.process');
+Route::post('photos/download', [PhotoController::class, 'download'])->name('photos.download')->middleware('throttle:photos.download');
 
 // move back before other routes when ready to apply auth
 Route::middleware(['auth', 'verified'])->group(function () {

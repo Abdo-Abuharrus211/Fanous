@@ -16,9 +16,14 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class PhotoController extends Controller
 {
+
+    private int $ServerScaledownDuration = 300;
+
     /**
      * Show the photo upload page.
      */
@@ -28,9 +33,15 @@ class PhotoController extends Controller
 
         $photos = Photo::listForSession($sessionId);
 
+        // removing because it's syncrhonous, blocking. Comment for reference
+        // $serverAwake = Cache::get("server_awake");
+        // if (!$serverAwake) $this->wakeUpServer();
+
         return Inertia::render('photos', [
             'sessionId' => $sessionId,
             'photos' => array_map(fn(Photo $p) => $p->toArray(), $photos),
+            // placeholder fro passing quota prop
+            'quota' => $this->getQuota($sessionId, $request->ip()),
         ]);
     }
 
@@ -62,11 +73,30 @@ class PhotoController extends Controller
     /**
      * Send photos to the backend API for analysis, then update with results.
      *
-     * @return JsonResponse
+     * @return JsonResponse resuls containing the new name and description of what the photo depicts
      */
     public function process(PhotoProcessRequest $request)
     {
         $sessionId = $this->sessionId($request);
+
+        // Checking quotas from Cache - this can be moved to dedicated Middleware down the line...
+        $ipAddress = $request->ip();
+        $todaysDate = now()->toDateString();
+        $quotaKey = "daily_quota:{$ipAddress}:{$todaysDate}";
+        $quotaLeft = Cache::get($quotaKey);
+
+        if (!app()->environment('local', 'development', 'dev') && !env('FANOUS_DEV_MODE', false)) {
+            // Check quota left
+            if (10 <= $quotaLeft) {
+                return response()->json([
+                    'error' => 'Daily quota ran out. Please try again in 24hrs.'
+                ], 429);
+            }
+        }
+
+        Cache::increment($quotaKey, 1);
+        Cache::put($quotaKey, $quotaLeft + 1, now()->addHours(24));
+
         $photoIds = $request->input('photo_ids', []);
 
         if (empty($photoIds)) {
@@ -111,7 +141,7 @@ class PhotoController extends Controller
             }
 
             try {
-                $response = Http::timeout(80)
+                $response = Http::timeout(200)
                     ->attach('image', $contents, basename($photo->tempPath))
                     ->post("{$backendUrl}/caption");
 
@@ -136,6 +166,9 @@ class PhotoController extends Controller
                             'newDescription' => $description,
                         ])),
                     );
+                    # decrement available quota on successful processing
+                    $currentTries = $request->session()->get("processing_quota");
+                    $request->session()->put("processing_quota", $currentTries - 1);
                 } else {
                     $results[] = [
                         'id' => $photoId,
@@ -252,6 +285,34 @@ class PhotoController extends Controller
         ]);
     }
 
+    /**
+     * Get the current quota for session and IP address
+     * 
+     * @return int the number of attemps 
+     */
+    public function getQuota(string $session, string $ipAddress)
+    {
+        $todaysDate = now()->toDateString();
+        $quotaKey = "daily_quota:{$ipAddress}:{$todaysDate}";
+        $quotaLeft = Cache::get($quotaKey);
+        return $quotaLeft;
+    }
+
+    private function wakeUpServer()
+    {
+        $backendUrl = config('services.fanous_backend.url');
+        try {
+            $response = Http::timeout(30)
+                ->get("{$backendUrl}/");
+            if (!$response->successful()) {
+                Log::warning("Failed to wake up server.", ['body' => $response->body(), 'status' => $response->status()]);
+            } else {
+                Cache::put("server_awake", true, now()->addSeconds($this->ServerScaledownDuration));
+            }
+        } catch (\Exception $e) {
+            Log::error("Error waking up server!", ["message" => $e->getMessage()]);
+        }
+    }
     /**
      * Get or create a session identifier for temp file grouping.
      */

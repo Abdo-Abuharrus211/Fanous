@@ -1,9 +1,10 @@
 import { Head, router } from '@inertiajs/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import DropZone, { type UploadedPhoto } from '@/components/drop-zone';
 import PhotoCard from '@/components/photo-card';
 import { Button } from '@/components/ui/button';
+import { process } from '@/routes/photos';
 
 export interface PagePhoto extends UploadedPhoto {
     selected: boolean;
@@ -12,6 +13,7 @@ export interface PagePhoto extends UploadedPhoto {
 interface PhotosProps {
     sessionId: string;
     photos?: UploadedPhoto[];
+    quota?: number;
 }
 
 export default function Photos({ photos: initialPhotos }: PhotosProps) {
@@ -21,6 +23,19 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     const [isProcessing, setIsProcessing] = useState(false);
     const [isRemoving, setIsRemoving] = useState(false);
     const [isDownloading, setIsDownloading] = useState(false);
+
+    // tab visibility listener
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                document.title = 'Photos - Fanous';
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, []);
 
 
     // Add uploaded photos to `photos` array
@@ -76,8 +91,76 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     }, []);
 
 
+    /**
+     * Retry processing photos that failed.
+     * 
+     * @param photoId string ID for the photo that failed
+     */
+    const retryPhoto = useCallback(async (photoId: string) => {
+        // set status to processing
+        setPhotos((prev) =>
+            prev.map((p) =>
+                p.id === photoId ? { ...p, status: 'processing' } : p,
+            ),
+        );
+
+        try {
+            const response = await fetch('/photos/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector<HTMLMetaElement>(
+                        'meta[name="csrf-token"]',
+                    )?.content ?? '',
+                },
+                body: JSON.stringify({ photo_ids: [photoId] }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error ?? 'Processing failed');
+            }
+
+            const data = await response.json();
+            const result = data.results?.find(
+                (r: { id: string }) => r.id === photoId,
+            );
+
+            setPhotos((prev) =>
+                prev.map((p) => {
+                    if (p.id !== photoId) return p;
+                    if (result && result.status !== 'error') {
+                        return {
+                            ...p,
+                            newName: result.newName ?? p.newName,
+                            newDescription:
+                                result.newDescription ?? p.newDescription,
+                            status: result.status ?? p.status,
+                        };
+                    }
+                    return { ...p, status: 'error' };
+                }),
+            );
+        } catch (error) {
+            console.error('Error retrying photo', error);
+            toast.error('Retry Error!', {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : `Something went wrong while processing retry for photo with id: ${photoId}.`,
+            });
+            setPhotos((prev) =>
+                prev.map((p) =>
+                    p.id === photoId ? { ...p, status: 'pending' } : p,
+                ),
+            );
+        }
+    }, []);
+
+
     const selectedPhotos = photos.filter((p) => p.selected);
     const allSelected = photos.length > 0 && photos.every((p) => p.selected);
+
 
     const handleSelectAll = () => {
         const newState = !allSelected;
@@ -87,6 +170,11 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
     };
 
 
+    /**
+     * Process the selected photos, make analysis request to backend.
+     * 
+     * Also handles state and mapping the new results.  
+     */
     const handleProcess = async () => {
         if (selectedPhotos.length === 0) return;
         setIsProcessing(true);
@@ -143,6 +231,26 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                     return photo;
                 }),
             );
+
+            // notify user with Toast popup notification and tab title change
+            const successCount = data.results?.filter(
+                (r: { status: string }) => r.status !== 'error',
+            ).length ?? 0;
+            const errorCount = selectedPhotos.length - successCount;
+
+            if (document.visibilityState === 'hidden' && successCount > 0) {
+                document.title = `${successCount} Done - Fanous`;
+            }
+
+            if (successCount > 0) {
+                toast.success(`${successCount} photo${successCount > 1 ? 's' : ''} analyzed`, {
+                    description:
+                        errorCount > 0
+                            ? `${errorCount} failed. Retry from the card.`
+                            : `All ${successCount} processed successfully.`,
+                });
+            }
+
         } catch (error) {
             console.error('Error processing selected photos', error);
             toast.error('Process error', {
@@ -163,6 +271,12 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
         }
     };
 
+
+    /**
+     * Download the images from the backend.
+     * 
+     * handles retrieving the compressed files and downloading them via browser.
+     */
     const handleDownload = async () => {
         if (selectedPhotos.length === 0) return;
         setIsDownloading(true);
@@ -261,6 +375,7 @@ export default function Photos({ photos: initialPhotos }: PhotosProps) {
                                 selected={photo.selected}
                                 onSelect={handleSelect}
                                 onRemove={removePhoto}
+                                onRetry={retryPhoto}
                             />
                         ))}
                     </div>

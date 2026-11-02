@@ -1,51 +1,29 @@
 """
-This module handles the Moondream model and all generative captioning.
-The model runs locally on K3s cluster without a GPU
+The base Model class with methods to caption and generate names for images.
 """
-
-import io
-import os
-import moondream as md
-from PIL import Image
+from abc import ABC, abstractmethod
 
 
-def init_model():
-    """
-    Initialize the Moondream model.
-    Uses local Photon inference if MOONDREAM_API_KEY is not set.
-    Uses cloud API if MOONDREAM_API_KEY is set.
-    """
-    api_key = os.environ.get("MOONDREAM_API_KEY")
-    if api_key:
-        return md.vl(api_key=api_key)
-    return md.photon("moondream2")
+class BaseModel(ABC):
+    def __init__(self):
+        self.model = None
+        self.name_gen_prompt = (
+            "Generate a short, memorable filename for this photo that captures its specific subject, action and/or scene. "
+            "Prefer proper names over generic categories."
+            "Think about what concrete visual details make this photo memorable and lead with that."
+            "Use only lowercase letters, numbers, and hyphens. Under 50 characters. Return only the filename, no extension, nothing else."
+        )
 
+    @abstractmethod
+    def caption(self, image_bytes: bytes) -> str:
+        """
+        Generate a descriptive caption for the image.
+        """
+        pass
 
-def caption(model, image_bytes: bytes) -> str:
-    """
-    Generate a descriptive caption for the image.
-    """
-    image = Image.open(io.BytesIO(image_bytes))
-    result = model.caption(image, length="short")
-    return result["caption"]
-
-
-def generate_name(model, image_bytes: bytes) -> str:
-    """
-    Ask the model to generate a short, human-friendly filename for the image.
-    """
-    image = Image.open(io.BytesIO(image_bytes))
-    prompt = (
-        "Generate a short, memorable filename for this photo that captures its specific subject and scene. "
-        "Prefer specific names over generic categories — a Ferrari is a 'ferrari', not a 'car'. "
-        "Think about what detail makes this photo memorable and lead with that. "
-        "Example: a classic Ferrari parked at a beach near a fruit stall should be 'ferrari-and-fruits-by-beach', not 'red-car-beach-backdrop'. "
-        "Use only lowercase letters, numbers, and hyphens. Under 50 characters. Return only the filename, no extension, nothing else."
-    )
-    result = model.query(image, prompt)
-    # clean up result
-    name = result["answer"].strip().strip('"').strip()
-    if not name:
-        name = "photo"
-    name = name.lower().replace(" ", "-")
-    return name
+    @abstractmethod
+    def generate_name(self, image_bytes: bytes) -> str:
+        """
+            Derive a human-readable filename from the image-caption
+        """
+        pass

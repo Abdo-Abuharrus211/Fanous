@@ -7,6 +7,10 @@ tasks I need to get to
 - [X] Write Dockerfile for Compose
 - [X] Test
 - [X] Refactor model modules and Driver class to be more modular and use models types
+- [X] Abstract the model classes, then refactor hf_model extend model
+- [ ] Dependency injection for model types in driver class? 
+- [ ] Once `demo-prod` branch is online, create a `self-host` deployment branch for OSS self-hosting.
+- 
 - [ ] Abstract the model classes, then refactor hf_model extend model
 ## Modal Specific
 - [X] Create Modal module to run server

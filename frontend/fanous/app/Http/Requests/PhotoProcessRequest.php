@@ -25,6 +25,7 @@ class PhotoProcessRequest extends FormRequest
             'photo_ids.required' => 'At least one photo must be selected for processing.',
             'photo_ids.array' => 'Photo IDs must be provided as an array.',
             'photo_ids.*.string' => 'Each photo ID must be a valid string.',
+            'processing_quoate' => 'Daily quota ran out.'
         ];
     }
 }

@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { ChevronDown, X } from 'lucide-react';
+import { ChevronDown, X, RotateCw } from 'lucide-react';
 
 export interface PhotoCardProps {
     id: string;
@@ -15,6 +15,7 @@ export interface PhotoCardProps {
     selected: boolean;
     onSelect: (id: string) => void;
     onRemove: (id: string) => void;
+    onRetry: (id: string) => void;
 }
 
 export default function PhotoCard({
@@ -28,6 +29,7 @@ export default function PhotoCard({
     selected,
     onSelect,
     onRemove,
+    onRetry,
 }: PhotoCardProps) {
     const statusColor: Record<string, string> = {
         pending: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
@@ -67,6 +69,20 @@ export default function PhotoCard({
                             </span>
                         </div>
                     </div>
+                )}
+
+                {status == "error" && (
+                    <button
+                        className="absolute right-10 top-2 z-10 flex size-7 items-center justify-center rounded-full bg-background/80 text-muted-foreground opacity-0 backdrop-blur-sm transition-all hover:bg-destructive hover:text-destructive-foreground group-hover:opacity-100"
+
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            onRetry(id);
+                        }}
+
+                    >
+                        <RotateCw className='size-4' />
+                    </button>
                 )}
                 <button
                     onClick={(event) => {
