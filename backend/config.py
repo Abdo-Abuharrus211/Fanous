@@ -3,20 +3,6 @@ Centralized configuration for Fanous backend.
 
 Reads from environment variables (prefixed with FANOUS_) and .env files.
 Use this as the single source of truth for all configurable values.
-
-Usage:
-    from config import settings
-    
-    # Access any config value:
-    settings.model_mode
-    settings.moondream_api_key
-
-Values precedence: env var > .env file > class default
-    Example:
-        Constructor arguments: Settings(debug=True) overrides everything
-        Environment variables: FANOUS_DEBUG=true in the shell
-        .env file: values in FANOUS_DEBUG=true inside .env
-        Class defaults: debug: bool = False in the class definition
 """
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
