@@ -4,7 +4,7 @@ and facilitates processing business logic.
 """
 # TODO: In future, Will refactor in future to be modular via dependency injection or composition so less repetitive code
 
-from moondream import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
+from moondream_md import init_model as init_vl_model, caption as vl_caption, generate_name as vl_generate_name
 from model_modes import ModelMode
 from hf_model import HuggingFaceTransformerModel as HF_Model
 
