@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 
+from custom_types import CaptionResponse
 from driver import Driver
 from model_modes import ModelMode
 
@@ -29,4 +30,4 @@ async def caption(image: UploadFile = File(...)):
     if not processed:
         raise HTTPException(status_code=500, detail="Captioning process failed")
 
-    return {"name": processed["name"], "description": processed["description"]}
+    return CaptionResponse(name=processed["name"], description=processed["description"])
