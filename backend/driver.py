@@ -20,7 +20,7 @@ class Driver:
     @property
     def model(self):
         if self._model_instance is None:
-            if self.model_mode is ModelMode.huggingface:
+            if self.model_mode is ModelMode.moondream_huggingface:
                 self._model_instance = HF_Model()
             else:
                 self._model_instance = MD_Photon()
